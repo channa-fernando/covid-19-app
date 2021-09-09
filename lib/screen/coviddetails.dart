@@ -1,6 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:untitled/dto/covidLiveDataDTO.dart';
+import 'package:untitled/utility/constants.dart';
 
 class CovidDetails extends StatefulWidget {
   const CovidDetails({Key? key}) : super(key: key);
@@ -18,6 +22,14 @@ class _CovidDetailsState extends State<CovidDetails> {
     'images/banner4.jpg',
     'images/banner5.jpg'
   ];
+
+  CovidLiveDataDTO covidLiveDataDTO = new CovidLiveDataDTO(success: false);
+  @override
+  void initState() {
+    super.initState();
+    covidLiveDataDTO = getCovidLiveUpdate();
+    print(covidLiveDataDTO);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +90,7 @@ class _CovidDetailsState extends State<CovidDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Confirmed Cases",
+                  "Confirmed Cases" ,
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
@@ -111,4 +123,35 @@ class _CovidDetailsState extends State<CovidDetails> {
       ),
     ));
   }
+
+  CovidLiveDataDTO getCovidLiveUpdate() {
+    http.get(
+      Uri.parse(Constants.SL_HEALTH_COVID_ENDPOINT),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    ).then((response) {
+      // print(response.body);
+      if (response.statusCode == 200) {
+        return CovidLiveDataDTO.fromJson(jsonDecode(response.body));
+
+      } else {
+        _showToast(context, 'Data Loading Failed!');
+        String errorData = "{\"success\": true }";
+        return CovidLiveDataDTO.fromJson(jsonDecode(errorData));
+      }
+    });
+    String errorData = "{\"success\": true }";
+    return CovidLiveDataDTO.fromJson(jsonDecode(errorData));
+  }
+  void _showToast(BuildContext context, String message) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
 }
