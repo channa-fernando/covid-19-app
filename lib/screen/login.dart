@@ -55,8 +55,7 @@ class _LoginState extends State<Login> {
     final forgotLabel = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        FlatButton(
-          padding: EdgeInsets.all(0.0),
+        TextButton(
           child: Text("Forgot password?",
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
@@ -64,7 +63,6 @@ class _LoginState extends State<Login> {
           },
         ),
         FlatButton(
-          padding: EdgeInsets.only(left: 0.0),
           child: Text("Sign up", style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             Navigator.pushReplacementNamed(context, '/register');
@@ -95,7 +93,7 @@ class _LoginState extends State<Login> {
                 TextFormField(
                   autofocus: false,
                   validator: (value) =>
-                      EmailValidator.validate(value) ? null : "Invalid Email!",
+                      EmailValidator.validate(value!) ? null : "Invalid Email!",
                   onSaved: (value) => _userName = value!,
                   decoration: buildInputDecoration("Enter Email!", Icons.email),
                 ),
