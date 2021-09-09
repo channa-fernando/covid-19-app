@@ -193,7 +193,7 @@ class _RegisterState extends State<Register> {
                 TextFormField(
                   autofocus: false,
                   validator: (value) =>
-                      EmailValidator.validate(value) ? null : "Invalid Email!",
+                      EmailValidator.validate(value!) ? null : "Invalid Email!",
                   onSaved: (value) => _userName = value!,
                   decoration: buildInputDecoration("Enter Email!", Icons.email),
                 ),

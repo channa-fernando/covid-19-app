@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:untitled/dto/covidLiveDataDTO.dart';
 import 'package:untitled/utility/constants.dart';
@@ -24,11 +25,12 @@ class _CovidDetailsState extends State<CovidDetails> {
   ];
 
   CovidLiveDataDTO covidLiveDataDTO = new CovidLiveDataDTO(success: false);
+
   @override
   void initState() {
     super.initState();
-    covidLiveDataDTO = getCovidLiveUpdate();
-    print(covidLiveDataDTO);
+    // covidLiveDataDTO = getCovidLiveUpdate();
+    // print(covidLiveDataDTO);
   }
 
   @override
@@ -40,20 +42,18 @@ class _CovidDetailsState extends State<CovidDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           CarouselSlider(
-            height: 250.0,
-            aspectRatio: 16 / 9,
-            initialPage: 0,
-            enlargeCenterPage: true,
-            autoPlay: true,
-            enableInfiniteScroll: true,
-            autoPlayInterval: Duration(seconds: 2),
-            autoPlayAnimationDuration: Duration(milliseconds: 2000),
-            pauseAutoPlayOnTouch: Duration(seconds: 5),
-            onPageChanged: (index) {
-              setState(() {
-                _current = index;
-              });
-            },
+            options: CarouselOptions(
+              height: 250.0,
+              aspectRatio: 16 / 9,
+              initialPage: 0,
+              enlargeCenterPage: true,
+              autoPlay: true,
+              enableInfiniteScroll: true,
+              autoPlayInterval: Duration(seconds: 2),
+              autoPlayAnimationDuration: Duration(milliseconds: 2000),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              onPageChanged: callBackFunction,
+            ),
             items: imgList.map((imgUrl) {
               return Builder(
                 builder: (BuildContext context) {
@@ -90,7 +90,7 @@ class _CovidDetailsState extends State<CovidDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Confirmed Cases" ,
+                  "Confirmed Cases",
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
@@ -134,7 +134,6 @@ class _CovidDetailsState extends State<CovidDetails> {
       // print(response.body);
       if (response.statusCode == 200) {
         return CovidLiveDataDTO.fromJson(jsonDecode(response.body));
-
       } else {
         _showToast(context, 'Data Loading Failed!');
         String errorData = "{\"success\": true }";
@@ -144,6 +143,7 @@ class _CovidDetailsState extends State<CovidDetails> {
     String errorData = "{\"success\": true }";
     return CovidLiveDataDTO.fromJson(jsonDecode(errorData));
   }
+
   void _showToast(BuildContext context, String message) {
     final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
@@ -154,4 +154,9 @@ class _CovidDetailsState extends State<CovidDetails> {
     );
   }
 
+  callBackFunction(int index, CarouselPageChangedReason reason) {
+    setState(() {
+      _current = index;
+    });
+  }
 }

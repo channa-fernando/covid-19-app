@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'dart:js';
-
 class CovidLiveDataDTO {
   final bool success;
 
