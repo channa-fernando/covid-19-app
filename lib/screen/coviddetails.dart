@@ -4,7 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:untitled/dto/covidLiveDataDTO.dart';
+import 'package:untitled/dto/covidUpdate.dart';
 import 'package:untitled/utility/constants.dart';
 
 class CovidDetails extends StatefulWidget {
@@ -24,13 +24,16 @@ class _CovidDetailsState extends State<CovidDetails> {
     'images/banner5.jpg'
   ];
 
-  CovidLiveDataDTO covidLiveDataDTO = new CovidLiveDataDTO(success: false);
+  late String _date = "";
+  late String _localNewCases = "";
+  late String _localTotalCases = "";
+  late String _localNewDeaths = "";
+  late String _localTotalDeaths = "";
 
   @override
   void initState() {
     super.initState();
-    // covidLiveDataDTO = getCovidLiveUpdate();
-    // print(covidLiveDataDTO);
+    getCovidLiveUpdate();
   }
 
   @override
@@ -90,7 +93,7 @@ class _CovidDetailsState extends State<CovidDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Confirmed Cases",
+                  "New Confirmed Cases: " + _localNewCases,
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
@@ -111,7 +114,49 @@ class _CovidDetailsState extends State<CovidDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Confirmed Cases",
+                  "Total Confirmed Cases: " + _localTotalCases ,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          Container(
+            width: 500,
+            height: 50,
+            padding: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+                color: Colors.green, borderRadius: BorderRadius.circular(8)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Confirmed New Deaths: " + _localNewDeaths ,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          Container(
+            width: 500,
+            height: 50,
+            padding: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+                color: Colors.green, borderRadius: BorderRadius.circular(8)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Confirmed Total  Deaths: " + _localTotalDeaths ,
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
@@ -124,25 +169,26 @@ class _CovidDetailsState extends State<CovidDetails> {
     ));
   }
 
-  CovidLiveDataDTO getCovidLiveUpdate() {
-    http.get(
-      Uri.parse(Constants.SL_HEALTH_COVID_ENDPOINT),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-    ).then((response) {
-      // print(response.body);
+  void getCovidLiveUpdate() async {
+     var response = await http.get(
+         Uri.parse(Constants.SL_HEALTH_COVID_ENDPOINT),
+         headers: <String, String>{
+           'Content-Type': 'application/json',
+      });
+
+      print(response.body);
       if (response.statusCode == 200) {
-        return CovidLiveDataDTO.fromJson(jsonDecode(response.body));
+        print(response.body);
+        CovidUpdate covidUpdate = CovidUpdate.fromJson(jsonDecode(response.body));
+        _date = covidUpdate.date;
+        _localNewCases = covidUpdate.localNewCases;
+        _localTotalCases = covidUpdate.localTotalCases;
+        _localNewDeaths = covidUpdate.localNewDeaths;
+        _localTotalDeaths = covidUpdate.localTotalDeaths;
       } else {
         _showToast(context, 'Data Loading Failed!');
-        String errorData = "{\"success\": true }";
-        return CovidLiveDataDTO.fromJson(jsonDecode(errorData));
       }
-    });
-    String errorData = "{\"success\": true }";
-    return CovidLiveDataDTO.fromJson(jsonDecode(errorData));
-  }
+    }
 
   void _showToast(BuildContext context, String message) {
     final scaffold = ScaffoldMessenger.of(context);
