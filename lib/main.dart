@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/screen/dashboard.dart';
+import 'package:untitled/screen/googlemap.dart';
 import 'package:untitled/screen/login.dart';
 import 'package:untitled/screen/register.dart';
 
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => DashBoard(),
         '/login':(context) => Login(),
         '/register':(context) => Register(),
-        '/secure/dashboard' : (context) => DashBoard()
+        '/secure/dashboard' : (context) => DashBoard(),
+        '/secure/map' : (context) => MapView()
       },);
   }
 }

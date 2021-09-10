@@ -48,8 +48,8 @@ class _CovidDetailsState extends State<CovidDetails> {
         children: <Widget>[
           CarouselSlider(
             options: CarouselOptions(
-              height: 250.0,
-              aspectRatio: 16 / 9,
+              aspectRatio: 15 / 13,
+              viewportFraction: 0.9,
               initialPage: 0,
               enlargeCenterPage: true,
               autoPlay: true,
@@ -281,7 +281,6 @@ class _CovidDetailsState extends State<CovidDetails> {
                 )
               ]),
           //New
-
         ],
       ),
     ));
