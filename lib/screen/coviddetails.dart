@@ -121,7 +121,7 @@ class _CovidDetailsState extends State<CovidDetails> {
                             overflow: TextOverflow.clip,
                           ),
                           SizedBox(
-                            height: 5.0,
+                            height: 3.0,
                           ),
                           Text(_localNewCases,
                               maxLines: 1,
@@ -166,7 +166,7 @@ class _CovidDetailsState extends State<CovidDetails> {
                             overflow: TextOverflow.clip,
                           ),
                           SizedBox(
-                            height: 5.0,
+                            height: 3.0,
                           ),
                           Text(_localNewDeaths,
                               maxLines: 1,
@@ -216,14 +216,14 @@ class _CovidDetailsState extends State<CovidDetails> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "New Cases",
+                            "Total Cases",
                             maxLines: 1,
                             overflow: TextOverflow.clip,
                           ),
                           SizedBox(
-                            height: 5.0,
+                            height: 3.0,
                           ),
-                          Text(_localNewCases,
+                          Text(_localTotalCases,
                               maxLines: 1,
                               overflow: TextOverflow.clip,
                               style: TextStyle(
@@ -261,14 +261,14 @@ class _CovidDetailsState extends State<CovidDetails> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "New Deaths",
+                            "Total Deaths",
                             maxLines: 1,
                             overflow: TextOverflow.clip,
                           ),
                           SizedBox(
-                            height: 5.0,
+                            height: 3.0,
                           ),
-                          Text(_localNewDeaths,
+                          Text(_localTotalDeaths,
                               maxLines: 1,
                               overflow: TextOverflow.clip,
                               style: TextStyle(
