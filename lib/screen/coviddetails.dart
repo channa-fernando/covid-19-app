@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/dto/covidUpdate.dart';
 import 'package:untitled/utility/constants.dart';
@@ -23,6 +23,8 @@ class _CovidDetailsState extends State<CovidDetails> {
     'images/banner4.jpg',
     'images/banner5.jpg'
   ];
+
+  List gifList = ['pngs/icon1.gif', 'pngs/icon2.gif'];
 
   late String _date = "";
   late String _localNewCases = "";
@@ -81,114 +83,229 @@ class _CovidDetailsState extends State<CovidDetails> {
             ),
           ),
           SizedBox(
-            height: 5.0,
+            height: 10.0,
           ),
-          Container(
-            width: 500,
-            height: 50,
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-                color: Colors.green, borderRadius: BorderRadius.circular(8)),
-            child: Column(
+          Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Text(
-                  "New Confirmed Cases: " + _localNewCases,
-                  style: TextStyle(
-                    fontSize: 18.0,
+                Container(
+                  width: 135,
+                  height: 55,
+                  padding: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black45,
+                        width: 1.0,
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: 40,
+                        width: 40,
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.12),
+                            shape: BoxShape.rectangle),
+                        child: Image.asset(gifList[0], fit: BoxFit.fill),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "New Cases",
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Text(_localNewCases,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blueGrey)),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
+                Container(
+                  width: 135,
+                  height: 55,
+                  padding: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black45,
+                        width: 1.0,
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: 40,
+                        width: 40,
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.12),
+                            shape: BoxShape.rectangle),
+                        child: Image.asset(gifList[1], fit: BoxFit.fill),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "New Deaths",
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Text(_localNewDeaths,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blueGrey)),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ]),
+          //New
+
           SizedBox(
             height: 15.0,
           ),
-          Container(
-            width: 500,
-            height: 50,
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-                color: Colors.green, borderRadius: BorderRadius.circular(8)),
-            child: Column(
+          Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Text(
-                  "Total Confirmed Cases: " + _localTotalCases ,
-                  style: TextStyle(
-                    fontSize: 18.0,
+                Container(
+                  width: 135,
+                  height: 55,
+                  padding: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black45,
+                        width: 1.0,
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: 40,
+                        width: 40,
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.12),
+                            shape: BoxShape.rectangle),
+                        child: Image.asset(gifList[0], fit: BoxFit.fill),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "New Cases",
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Text(_localNewCases,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blueGrey)),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Container(
-            width: 500,
-            height: 50,
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-                color: Colors.green, borderRadius: BorderRadius.circular(8)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Confirmed New Deaths: " + _localNewDeaths ,
-                  style: TextStyle(
-                    fontSize: 18.0,
+                Container(
+                  width: 135,
+                  height: 55,
+                  padding: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black45,
+                        width: 1.0,
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: 40,
+                        width: 40,
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.12),
+                            shape: BoxShape.rectangle),
+                        child: Image.asset(gifList[1], fit: BoxFit.fill),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "New Deaths",
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Text(_localNewDeaths,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blueGrey)),
+                        ],
+                      )
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Container(
-            width: 500,
-            height: 50,
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-                color: Colors.green, borderRadius: BorderRadius.circular(8)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Confirmed Total  Deaths: " + _localTotalDeaths ,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                  ),
-                ),
-              ],
-            ),
-          )
+                )
+              ]),
+          //New
+
         ],
       ),
     ));
   }
 
   void getCovidLiveUpdate() async {
-     var response = await http.get(
-         Uri.parse(Constants.SL_HEALTH_COVID_ENDPOINT),
-         headers: <String, String>{
-           'Content-Type': 'application/json',
-      });
+    var response = await http.get(Uri.parse(Constants.SL_HEALTH_COVID_ENDPOINT),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        });
 
+    print(response.body);
+    if (response.statusCode == 200) {
       print(response.body);
-      if (response.statusCode == 200) {
-        print(response.body);
-        CovidUpdate covidUpdate = CovidUpdate.fromJson(jsonDecode(response.body));
-        _date = covidUpdate.date;
-        _localNewCases = covidUpdate.localNewCases;
-        _localTotalCases = covidUpdate.localTotalCases;
-        _localNewDeaths = covidUpdate.localNewDeaths;
-        _localTotalDeaths = covidUpdate.localTotalDeaths;
-      } else {
-        _showToast(context, 'Data Loading Failed!');
-      }
+      CovidUpdate covidUpdate = CovidUpdate.fromJson(jsonDecode(response.body));
+      _date = covidUpdate.date;
+      _localNewCases = covidUpdate.localNewCases;
+      _localTotalCases = covidUpdate.localTotalCases;
+      _localNewDeaths = covidUpdate.localNewDeaths;
+      _localTotalDeaths = covidUpdate.localTotalDeaths;
+    } else {
+      _showToast(context, 'Data Loading Failed!');
     }
+  }
 
   void _showToast(BuildContext context, String message) {
     final scaffold = ScaffoldMessenger.of(context);
