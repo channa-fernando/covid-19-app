@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:untitled/dto/loginResponseDTO.dart';
 import 'package:untitled/utility/constants.dart';
 import 'package:untitled/utility/widgets.dart';
 
@@ -20,7 +22,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    var doLogin = () {
+    var doLogin = () async {
       final form = formKey.currentState;
 
       if (form != null && form.validate()) {
@@ -31,23 +33,30 @@ class _LoginState extends State<Login> {
           "passWord": _passWord,
         };
 
-        http
-            .post(
+        var response = await http.post(
           Uri.parse(Constants.BASEURL),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
           body: jsonEncode(requestBody),
-        )
-            .then((response) {
-          if (response.statusCode == 200) {
+        );
+
+        print(response.body);
+        if (response.statusCode == 200) {
             _showToast(context, 'Login Success!');
+            LoginResponseDTO loginResponseDTO = LoginResponseDTO.fromJson(jsonDecode(response.body));
+            final prefs = await SharedPreferences.getInstance();
+            prefs.setString('userId', loginResponseDTO.userId);
+            prefs.setString('token', loginResponseDTO.token);
+            prefs.setString('userName', loginResponseDTO.userName);
+            prefs.setString('address', loginResponseDTO.address);
             Navigator.pushReplacementNamed(context, '/secure/dashboard');
-          } else {
+
+        } else {
             _showToast(context, 'Bad Credentials!');
           }
-        });
-      } else {
+      }
+      else {
         _showToast(context, 'Please Resubmit Registration Details!');
       }
     };

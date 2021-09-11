@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/dto/covidUpdate.dart';
 import 'package:untitled/utility/constants.dart';
 
@@ -287,6 +288,12 @@ class _CovidDetailsState extends State<CovidDetails> {
   }
 
   void getCovidLiveUpdate() async {
+    final prefs = await SharedPreferences.getInstance();
+    print(prefs.getString('userId'));
+    print(prefs.getString('token'));
+    print(prefs.getString('address'));
+    print(prefs.getString('userName'));
+
     var response = await http.get(Uri.parse(Constants.SL_HEALTH_COVID_ENDPOINT),
         headers: <String, String>{
           'Content-Type': 'application/json',
