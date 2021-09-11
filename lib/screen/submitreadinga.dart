@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/utility/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +16,14 @@ class _SubmitReadingsState extends State<SubmitReadings> {
   final formKey = GlobalKey<FormState>();
   String _userName = "";
   String _passWord = "";
+  String _emergencyContact = "";
+  String _address = "";
 
+  String _category = 'Home Quarantine Patient';
+  var categoryList = [
+    'Home Quarantine Patient',
+    'Home Quarantine Close Contact'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -63,27 +71,78 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                 SizedBox(
                   height: 15.0,
                 ),
-                Text("Email"),
+                Text("Category"),
+                SizedBox(
+                  height: 5.0,
+                ),
+                Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        border: Border.all(
+                            color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          value: _category,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          iconSize: 20,
+                          elevation: 16,
+                          items: categoryList.map((String categorySelected) {
+                            return DropdownMenuItem(value: categorySelected, child: Text(categorySelected,));
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _category = newValue!;
+                            });
+                          },
+                        ),
+                      ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text("Quarantine Center Address"),
                 SizedBox(
                   height: 5.0,
                 ),
                 TextFormField(
                   autofocus: false,
                   validator: (value) =>
-                  value!.isEmpty ? "Please Enter Password" : null,
-                  onSaved: (value) => _userName = value!,
-                  decoration: buildInputDecoration("Enter Email!", Icons.email),
+                  value!.isEmpty ? "Please Enter Address of Center" : null,
+                  onSaved: (value) => _address = value!,
+                  decoration: buildInputDecoration("Please Enter Address!", Icons.location_on),
                 ),
                 SizedBox(
-                  height: 20.0,
+                  height: 10.0,
                 ),
-                Text("Password"),
+                Text("Emergency Contact Number of the Center"),
                 SizedBox(
                   height: 5.0,
                 ),
                 TextFormField(
                   autofocus: false,
-                  obscureText: true,
+                  validator: (value) =>
+                  value!.isEmpty ? "Emergency Contact Number" : null,
+                  onSaved: (value) => _emergencyContact = value!,
+                  decoration: buildInputDecoration("Enter Emergency Contact!", Icons.phone),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  padding: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                    ),
+                  child: Text("Password"),
+                ),
+                SizedBox(
+                  height: 5.0,
+                ),
+                TextFormField(
+                  autofocus: false,
                   validator: (value) =>
                   value!.isEmpty ? "Please Enter Password" : null,
                   onSaved: (value) => _passWord = value!,

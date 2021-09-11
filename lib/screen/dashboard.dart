@@ -14,7 +14,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   int _selectedIndex = 0; //New
 
-  final _pageOptions = [CovidDetails(), SubmitReadings(), MapView()];
+  final _pageOptions = [SubmitReadings(), CovidDetails(), MapView()];
 
   @override
   Widget build(BuildContext context) {
