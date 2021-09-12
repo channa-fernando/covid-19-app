@@ -30,9 +30,6 @@
 
             <!--Google MaP-->
 
-            <meta-data android:name="com.google.android.geo.API_KEY"
-                       android:value="AIzaSyBRl1AhkR3S0oFTww1qyeOnKUFqib3zhPA"
-            />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -43,6 +40,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
+       <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBRl1AhkR3S0oFTww1qyeOnKUFqib3zhPA"/>
+
+   </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

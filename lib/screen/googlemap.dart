@@ -10,24 +10,28 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
 
-  final CameraPosition initialCameraPosition = CameraPosition(target: LatLng(7.1930961, 80.2648257));
+  final CameraPosition _initialCameraPosition = CameraPosition(target: LatLng(7.1930961, 80.2648257));
+  late GoogleMapController _googleMapController;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                child: GoogleMap(
-                  initialCameraPosition: initialCameraPosition,
-                  mapType: MapType.normal,
-                ),
-              )
-            ],
-          ),
-    ));
+      body: GoogleMap(
+        initialCameraPosition: _initialCameraPosition,
+        mapType: MapType.normal,
+        onMapCreated: (controller){
+         setState(() {
+           _googleMapController = controller;
+         });
+        },
+        onTap: (coordinate){
+          _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){},
+        child: Icon(Icons.zoom_out),
+      ),
+    );
   }
 }

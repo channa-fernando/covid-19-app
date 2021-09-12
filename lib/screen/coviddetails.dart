@@ -18,14 +18,14 @@ class CovidDetails extends StatefulWidget {
 class _CovidDetailsState extends State<CovidDetails> {
   int _current = 0;
   List imgList = [
-    'images/banner1.jpg',
-    'images/banner2.jpg',
-    'images/banner3.jpg',
-    'images/banner4.jpg',
-    'images/banner5.jpg'
+    'assets/images/banner1.jpg',
+    'assets/images/banner2.jpg',
+    'assets/images/banner3.jpg',
+    'assets/images/banner4.jpg',
+    'assets/images/banner5.jpg'
   ];
 
-  List gifList = ['pngs/icon1.gif', 'pngs/icon2.gif'];
+  List gifList = ['assets/pngs/icon1.gif', 'assets/pngs/icon2.gif'];
 
   late String _date = "";
   late String _localNewCases = "";
@@ -43,7 +43,7 @@ class _CovidDetailsState extends State<CovidDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+      padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
