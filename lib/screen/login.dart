@@ -44,12 +44,12 @@ class _LoginState extends State<Login> {
         print(response.body);
         if (response.statusCode == 200) {
             _showToast(context, 'Login Success!');
-            LoginResponseDTO loginResponseDTO = LoginResponseDTO.fromJson(jsonDecode(response.body));
-            final prefs = await SharedPreferences.getInstance();
-            prefs.setString('userId', loginResponseDTO.userId);
-            prefs.setString('token', loginResponseDTO.token);
-            prefs.setString('userName', loginResponseDTO.userName);
-            prefs.setString('address', loginResponseDTO.address);
+            // LoginResponseDTO loginResponseDTO = LoginResponseDTO.fromJson(jsonDecode(response.body));
+            // final prefs = await SharedPreferences.getInstance();
+            // prefs.setString('userId', loginResponseDTO.userId);
+            // prefs.setString('token', loginResponseDTO.token);
+            // prefs.setString('userName', loginResponseDTO.userName);
+            // prefs.setString('address', loginResponseDTO.address);
             Navigator.pushReplacementNamed(context, '/secure/dashboard');
 
         } else {

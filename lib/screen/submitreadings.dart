@@ -517,7 +517,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
           DataRow(
             cells: [
               DataCell(Container(width: 80, child: Text(_dateOfContact, textAlign: TextAlign.left,),),),
-              DataCell(Container(width: 60, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
+              DataCell(Container(width: 70, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
               DataCell(Container(width: 150, child: Text("(" + _traceLocation.latitude.toString() + " ,\n" + _traceLocation.longitude.toString() + ")", textAlign: TextAlign.start,),),)
             ],
           )
@@ -526,7 +526,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
         DataRow newDataRow = DataRow(
             cells: [
               DataCell(Container(width: 80, child: Text(_dateOfContact, textAlign: TextAlign.left,),),),
-              DataCell(Container(width: 60, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
+              DataCell(Container(width: 70, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
               DataCell(Container(width: 150, child: Text("(" + _traceLocation.latitude.toString() + " ,\n" + _traceLocation.longitude.toString() + ")", textAlign: TextAlign.start,),),)
             ]);
         dataRows.add(newDataRow);
