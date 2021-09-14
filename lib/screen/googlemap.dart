@@ -17,7 +17,7 @@ class _MapViewState extends State<MapView> {
   LatLng currentPosition =  LatLng(7.1930961, 80.2648257);
 
   @override
-  void initState () {
+  void initState() {
     super.initState();
     _getUserLocation();
   }

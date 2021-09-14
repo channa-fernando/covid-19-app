@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/utility/constants.dart';
 import 'package:untitled/utility/widgets.dart';
+import 'package:editable/editable.dart';
+import 'package:intl/intl.dart';
 
 class SubmitReadings extends StatefulWidget {
   const SubmitReadings({Key? key}) : super(key: key);
@@ -15,9 +18,22 @@ class SubmitReadings extends StatefulWidget {
 
 class _SubmitReadingsState extends State<SubmitReadings> {
   final formKey = GlobalKey<FormState>();
+  final _editableKey = GlobalKey<EditableState>();
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay selectedInitialFromTime = TimeOfDay.now();
+  TimeOfDay selectedInitialToTime = TimeOfDay.now();
 
   String _emergencyContact = "";
   String _address = "";
+  String _dateOfContact = "Tap to select date";
+  String _durationFrom = "Select Time1";
+  String _durationTo = "Select Time2";
+
+  String _location = "Tap to select Location";
+  String _latLangLocation = "";
+
+  LatLng cameraPosition =  LatLng(7.1930961, 80.2648257);
+  late GoogleMapController _googleMapController;
 
   String _category = 'Home Quarantine Patient';
   var categoryList = [
@@ -43,6 +59,74 @@ class _SubmitReadingsState extends State<SubmitReadings> {
     '36.0°C - 35.5°C',
     '35.0°C - 34.5°C'
   ];
+
+  List rows = [
+    {
+      "date": '2021/02/01',
+      "from": '06.00',
+      "to": '06.15',
+      "location": 'Bar Flutter'
+    },
+  ];
+
+  List cols = [
+    {"title": 'Date', 'widthFactor': 0.2, 'key': 'date'},
+    {"title": 'From', 'widthFactor': 0.2, 'key': 'from'},
+    {"title": 'To', 'widthFactor': 0.2, 'key': 'to'},
+    {"title": 'Location', 'widthFactor': 0.2, 'key': 'location'},
+  ];
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        _dateOfContact = new DateFormat.yMMMMd("en_US").format(selectedDate);
+      });
+  }
+
+  Future<void> _selectFromTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (context, child) {
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                // Using 12-Hour format
+                  alwaysUse24HourFormat: false),
+              // If you want 24-Hour format, just change alwaysUse24HourFormat to true
+              child: child!);
+        });
+
+    if (pickedTime != null)
+      setState(() {
+        _durationFrom = pickedTime.format(context);
+      });
+  }
+
+  Future<void> _selectToTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+        context: context, initialTime: TimeOfDay.now());
+
+    if (pickedTime != null)
+      setState(() {
+        _durationTo = pickedTime.format(context);
+      });
+  }
+
+  void _addNewRow() {
+    setState(() {
+      _editableKey.currentState!.createRow();
+    });
+  }
+
+  void _printEditedRows() {
+    List editedRows = _editableKey.currentState!.editedRows;
+    print(editedRows);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +166,9 @@ class _SubmitReadingsState extends State<SubmitReadings> {
 
     return Scaffold(
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Container(
-          padding: EdgeInsets.all(40.0),
+          padding: EdgeInsets.all(25.0),
           child: Form(
             key: formKey,
             child: Column(
@@ -157,7 +242,113 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                       "Enter Emergency Contact!", Icons.phone),
                 ),
                 SizedBox(
-                  height: 10.0,
+                  height: 20.0,
+                ),
+                Text("Contact Tracing"),
+                SizedBox(
+                  height: 5.0,
+                ),
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Text("Date: "),
+                      Text(_dateOfContact),
+                      IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed:(){
+                          _selectDate(context);
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                    child: Row(
+                      children: <Widget>[
+                        Text("From: "),
+                        Text(_durationFrom),
+                        IconButton(
+                          icon: Icon(Icons.access_time),
+                          onPressed:(){
+                            _selectFromTime(context);
+                          },
+                        ),
+                        Text(" To: "),
+                        Text(_durationTo),
+                        IconButton(
+                          icon: Icon(Icons.access_time),
+                          onPressed:(){
+                            _selectToTime(context);
+                          },
+                        )
+                      ],
+                    )
+                ),
+                SizedBox(
+                  height: 5.0,
+                ),
+                Container(
+                    child: Row(
+                      children: <Widget>[
+                        Text("Location: "),
+                        Text(_location),
+                        IconButton(
+                          icon: Icon(Icons.place_rounded),
+                          onPressed:(){
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return GoogleMap(
+                                    initialCameraPosition: CameraPosition(
+                                      target: cameraPosition,
+                                      zoom: 11.0,
+                                    ),
+                                    mapType: MapType.normal,
+                                    myLocationEnabled: true,
+                                    onMapCreated: (controller){
+                                      setState(() {
+                                        _googleMapController = controller;
+                                        _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: cameraPosition, zoom: 11.0)));
+                                        new Marker(
+                                          icon: BitmapDescriptor.defaultMarker,
+                                          markerId: MarkerId("currentPosition"),
+                                          position: cameraPosition,
+                                          infoWindow: InfoWindow(title: "userMarker", snippet: '*'),
+                                        );
+                                      });
+                                    },
+                                    onTap: (coordinate){
+                                      _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
+                                    },
+                                  );
+                                });
+                          },
+                        ),
+                      ],
+                    )
+                ),
+                SizedBox(
+                  height: 5.0,
+                ),
+                Container(
+                  height: 600,
+                  child: Editable(
+                      key: _editableKey,
+                      columns: cols,
+                      rows: rows,
+                      showCreateButton: true,
+                      zebraStripe: true,
+                      tdStyle: TextStyle(fontSize: 15),
+                      showSaveIcon: false,
+                      borderColor: Colors.grey.shade300,
+                      onRowSaved: (value) {
+                        print(value);
+                        },
+                      onSubmitted: (value) {
+                        print(value);
+                        },
+                      tdAlignment: TextAlign.left
+                  ),
                 ),
                 Container(
                   padding: EdgeInsets.all(5.0),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/screen/googlemap.dart';
-import 'package:untitled/screen/submitreadinga.dart';
+import 'package:untitled/screen/submitreadings.dart';
 
 import 'coviddetails.dart';
 
@@ -14,7 +14,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   int _selectedIndex = 0; //New
 
-  final _pageOptions = [MapView(), CovidDetails(), SubmitReadings()];
+  final _pageOptions = [SubmitReadings(), CovidDetails(), MapView()];
 
   @override
   Widget build(BuildContext context) {
