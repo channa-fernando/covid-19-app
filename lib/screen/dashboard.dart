@@ -14,7 +14,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   int _selectedIndex = 0; //New
 
-  final _pageOptions = [SubmitReadings(), CovidDetails(), MapView()];
+  final _pageOptions = [CovidDetails(), SubmitReadings(), MapView()];
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +37,11 @@ class _DashBoardState extends State<DashBoard> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_circle_rounded),
-            label: 'Your Data',
+            label: 'Report Incident',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
-            label: 'Map',
+            label: 'Contact Tracing',
           ),
         ],
       ),
