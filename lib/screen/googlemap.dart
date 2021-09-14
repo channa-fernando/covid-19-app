@@ -16,6 +16,8 @@ class _MapViewState extends State<MapView> {
   late GoogleMapController _googleMapController;
   LatLng currentPosition =  LatLng(7.1930961, 80.2648257);
 
+  List<Marker> myMarker = <Marker>[];
+
   @override
   void initState() {
     super.initState();
@@ -26,34 +28,37 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: currentPosition,
-          zoom: 11.0,
-
+          initialCameraPosition: CameraPosition(
+            target: currentPosition,
+            zoom: 14.0,
         ),
-        mapType: MapType.normal,
-        myLocationEnabled: true,
-        onMapCreated: (controller){
-         setState(() {
-           _googleMapController = controller;
-           _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: currentPosition,zoom: 11.0)));
-           new Marker(
-             icon: BitmapDescriptor.defaultMarker,
-             markerId: MarkerId("currentPosition"),
-             position: currentPosition,
-             infoWindow: InfoWindow(title: "userMarker", snippet: '*'),
-           );
-         });
-        },
-        onTap: (coordinate){
-          _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){},
-        child: Icon(Icons.zoom_out),
-      ),
-    );
+          mapType: MapType.normal,
+          myLocationEnabled: true,
+          onMapCreated: (controller){
+           setState(() {
+             _googleMapController = controller;
+             _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: currentPosition,zoom: 11.0)));
+             new Marker(
+               icon: BitmapDescriptor.defaultMarker,
+               markerId: MarkerId("currentPosition"),
+               position: currentPosition,
+               infoWindow: InfoWindow(title: "userMarker", snippet: '*'),
+             );
+           });
+          },
+
+          onTap: (coordinate) {
+            setState(() {
+              // _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
+              print(coordinate);
+              myMarker = [];
+              myMarker.add(Marker(
+                markerId: MarkerId(coordinate.toString()),
+                position: coordinate,
+              ));
+            });
+          }),
+      );
   }
 
   void _getUserLocation() async {

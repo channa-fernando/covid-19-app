@@ -1,13 +1,13 @@
 import 'dart:convert';
 
+import 'package:editable/editable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:untitled/utility/constants.dart';
 import 'package:untitled/utility/widgets.dart';
-import 'package:editable/editable.dart';
-import 'package:intl/intl.dart';
 
 class SubmitReadings extends StatefulWidget {
   const SubmitReadings({Key? key}) : super(key: key);
@@ -25,15 +25,16 @@ class _SubmitReadingsState extends State<SubmitReadings> {
 
   String _emergencyContact = "";
   String _address = "";
-  String _dateOfContact = "Tap to select date";
+  String _dateOfContact = "Select Date";
   String _durationFrom = "Select Time1";
   String _durationTo = "Select Time2";
 
-  String _location = "Tap to select Location";
-  String _latLangLocation = "";
-
-  LatLng cameraPosition =  LatLng(7.1930961, 80.2648257);
+  String _location = "Select Location";
+  LatLng _traceLocation = LatLng(7.1930961, 80.2648257);
+  String _searchAddress = "";
+  LatLng cameraPosition = LatLng(7.1930961, 80.2648257);
   late GoogleMapController _googleMapController;
+  List<Marker> myMarker = [];
 
   String _category = 'Home Quarantine Patient';
   var categoryList = [
@@ -62,18 +63,16 @@ class _SubmitReadingsState extends State<SubmitReadings> {
 
   List rows = [
     {
-      "date": '2021/02/01',
-      "from": '06.00',
-      "to": '06.15',
-      "location": 'Bar Flutter'
+      "date": '21/02/01',
+      "duration": '06.00 - 06.15',
+      "location": '7.1930961, 80.2648257'
     },
   ];
 
   List cols = [
-    {"title": 'Date', 'widthFactor': 0.2, 'key': 'date'},
-    {"title": 'From', 'widthFactor': 0.2, 'key': 'from'},
-    {"title": 'To', 'widthFactor': 0.2, 'key': 'to'},
-    {"title": 'Location', 'widthFactor': 0.2, 'key': 'location'},
+    {"title": 'Date', 'width': 0.3, 'key': 'date'},
+    {"title": 'Duration', 'widthFactor': 0.25, 'key': 'duration'},
+    {"title": 'Location', 'widthFactor': 0.5, 'key': 'location'},
   ];
 
   Future<void> _selectDate(BuildContext context) async {
@@ -95,7 +94,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
         builder: (context, child) {
           return MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                // Using 12-Hour format
+                  // Using 12-Hour format
                   alwaysUse24HourFormat: false),
               // If you want 24-Hour format, just change alwaysUse24HourFormat to true
               child: child!);
@@ -108,8 +107,8 @@ class _SubmitReadingsState extends State<SubmitReadings> {
   }
 
   Future<void> _selectToTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-        context: context, initialTime: TimeOfDay.now());
+    final TimeOfDay? pickedTime =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
 
     if (pickedTime != null)
       setState(() {
@@ -119,7 +118,11 @@ class _SubmitReadingsState extends State<SubmitReadings> {
 
   void _addNewRow() {
     setState(() {
-      _editableKey.currentState!.createRow();
+      rows.add({
+        "date": '21/02/01',
+        "duration": '06.00 - 06.15',
+        "location": '7.1930961, 80.2648257'
+      });
     });
   }
 
@@ -249,122 +252,198 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                   height: 5.0,
                 ),
                 Container(
-                  child: Row(
+                  padding: EdgeInsets.all(10.0),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey,
+                      style: BorderStyle.solid,
+                    ),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("Date: "),
-                      Text(_dateOfContact),
-                      IconButton(
-                        icon: Icon(Icons.calendar_today),
-                        onPressed:(){
-                          _selectDate(context);
-                        },
-                      )
+                      Container(
+                        child: Row(
+                          children: <Widget>[
+                            Text("Date: "),
+                            Text(_dateOfContact),
+                            IconButton(
+                              icon: Icon(Icons.calendar_today),
+                              onPressed: () {
+                                _selectDate(context);
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                          child: Row(
+                        children: <Widget>[
+                          Text("From: "),
+                          Text(_durationFrom),
+                          IconButton(
+                            icon: Icon(Icons.access_time),
+                            onPressed: () {
+                              _selectFromTime(context);
+                            },
+                          ),
+                          Text(" To: "),
+                          Text(_durationTo),
+                          IconButton(
+                            icon: Icon(Icons.access_time),
+                            onPressed: () {
+                              _selectToTime(context);
+                            },
+                          )
+                        ],
+                      )),
+                      SizedBox(
+                        height: 5.0,
+                      ),
+                      Container(
+                          child: Row(
+                        children: <Widget>[
+                          Text("Location: "),
+                          Text(_location),
+                          IconButton(
+                            icon: Icon(Icons.place_rounded),
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  enableDrag: false,
+                                  builder: (BuildContext context) {
+                                    return ListView(
+                                      padding: EdgeInsets.all(2.0),
+                                      children: [
+                                        TextField(
+                                          decoration: InputDecoration(
+                                              hintText: " Pick a Location"),
+                                        ),
+                                        Container(
+                                          height: 300,
+                                          child: GoogleMap(
+                                              initialCameraPosition:
+                                                  CameraPosition(
+                                                target: cameraPosition,
+                                                zoom: 14.0,
+                                              ),
+                                              mapType: MapType.normal,
+                                              myLocationEnabled: true,
+                                              onMapCreated: (controller) {
+                                                setState(() {
+                                                  _googleMapController =
+                                                      controller;
+                                                  _googleMapController
+                                                      .animateCamera(CameraUpdate
+                                                          .newCameraPosition(
+                                                              CameraPosition(
+                                                                  target:
+                                                                      cameraPosition,
+                                                                  zoom: 14.0)));
+                                                  new Marker(
+                                                    icon: BitmapDescriptor
+                                                        .defaultMarker,
+                                                    markerId: MarkerId(
+                                                        "currentPosition"),
+                                                    position: cameraPosition,
+                                                    infoWindow: InfoWindow(
+                                                        title: "userMarker",
+                                                        snippet: '*'),
+                                                  );
+                                                });
+                                              },
+                                              onTap: (coordinate) {
+                                                setState(() {
+                                                  // _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
+                                                  _traceLocation = coordinate;
+                                                  print(_traceLocation);
+                                                  myMarker = [];
+                                                  myMarker.add(Marker(
+                                                    markerId: MarkerId(
+                                                        coordinate.toString()),
+                                                    position: coordinate,
+                                                  ));
+                                                });
+                                              }),
+                                        )
+                                      ],
+                                    );
+                                  });
+                            },
+                          ),
+                        ],
+                      )),
+                      Container(
+                        padding: EdgeInsets.all(1.0),
+                        // decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(5.0),
+                        //     border: Border.all()),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.add_circle_rounded,
+                                color: Colors.blue,
+                                size: 35,
+                              ),
+                              onPressed: () {},
+                            ),
+                            Text(
+                              "Add to Table",style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                Container(
-                    child: Row(
-                      children: <Widget>[
-                        Text("From: "),
-                        Text(_durationFrom),
-                        IconButton(
-                          icon: Icon(Icons.access_time),
-                          onPressed:(){
-                            _selectFromTime(context);
-                          },
-                        ),
-                        Text(" To: "),
-                        Text(_durationTo),
-                        IconButton(
-                          icon: Icon(Icons.access_time),
-                          onPressed:(){
-                            _selectToTime(context);
-                          },
-                        )
-                      ],
-                    )
-                ),
                 SizedBox(
                   height: 5.0,
                 ),
                 Container(
-                    child: Row(
-                      children: <Widget>[
-                        Text("Location: "),
-                        Text(_location),
-                        IconButton(
-                          icon: Icon(Icons.place_rounded),
-                          onPressed:(){
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return GoogleMap(
-                                    initialCameraPosition: CameraPosition(
-                                      target: cameraPosition,
-                                      zoom: 11.0,
-                                    ),
-                                    mapType: MapType.normal,
-                                    myLocationEnabled: true,
-                                    onMapCreated: (controller){
-                                      setState(() {
-                                        _googleMapController = controller;
-                                        _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: cameraPosition, zoom: 11.0)));
-                                        new Marker(
-                                          icon: BitmapDescriptor.defaultMarker,
-                                          markerId: MarkerId("currentPosition"),
-                                          position: cameraPosition,
-                                          infoWindow: InfoWindow(title: "userMarker", snippet: '*'),
-                                        );
-                                      });
-                                    },
-                                    onTap: (coordinate){
-                                      _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
-                                    },
-                                  );
-                                });
-                          },
+                  color: Colors.white,
+                  child: DataTable(
+                    sortAscending: true,
+                    sortColumnIndex: 0,
+                    columns: [
+                      DataColumn(
+                        label: Text("Date", textAlign: TextAlign.start),
+                      ),
+                      DataColumn(
+                          label: Text("Duration", textAlign: TextAlign.start)),
+                      DataColumn(
+                          label: Text("Location", textAlign: TextAlign.start)),
+                    ],
+                    rows: [
+                      DataRow(cells: [
+                        DataCell(
+                          Text(
+                            "Select a Date!",
+                            textAlign: TextAlign.start,
+                          ),
+                          placeholder: true,
                         ),
-                      ],
-                    )
-                ),
-                SizedBox(
-                  height: 5.0,
-                ),
-                Container(
-                  height: 600,
-                  child: Editable(
-                      key: _editableKey,
-                      columns: cols,
-                      rows: rows,
-                      showCreateButton: true,
-                      zebraStripe: true,
-                      tdStyle: TextStyle(fontSize: 15),
-                      showSaveIcon: false,
-                      borderColor: Colors.grey.shade300,
-                      onRowSaved: (value) {
-                        print(value);
-                        },
-                      onSubmitted: (value) {
-                        print(value);
-                        },
-                      tdAlignment: TextAlign.left
+                        DataCell(
+                            Text(
+                              "Select a Duration!",
+                              textAlign: TextAlign.start,
+                            ),
+                            placeholder: true),
+                        DataCell(
+                            Text(
+                              "Select a Location!",
+                              textAlign: TextAlign.start,
+                            ),
+                            placeholder: true),
+                      ])
+                    ],
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.all(5.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.grey,
-                        style: BorderStyle.solid,
-                        width: 0.80),
-                  ),
-                  child: Text("Current Readings"),
-                ),
                 SizedBox(
-                  height: 5.0,
-                ),
-                SizedBox(
-                  height: 5.0,
+                  height: 15.0,
                 ),
                 Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,7 +510,8 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                                 icon: const Icon(Icons.arrow_drop_down),
                                 iconSize: 20,
                                 elevation: 16,
-                                items: temperatureList.map((String categorySelected) {
+                                items: temperatureList
+                                    .map((String categorySelected) {
                                   return DropdownMenuItem(
                                       value: categorySelected,
                                       child: Text(
@@ -470,4 +550,6 @@ class _SubmitReadingsState extends State<SubmitReadings> {
       ),
     );
   }
+
+  void _searchNavigate() {}
 }
