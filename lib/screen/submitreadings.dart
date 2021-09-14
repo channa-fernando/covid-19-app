@@ -26,13 +26,13 @@ class _SubmitReadingsState extends State<SubmitReadings> {
   String _emergencyContact = "";
   String _address = "";
   String _dateOfContact = "Select Date";
-  String _durationFrom = "Select Time1";
-  String _durationTo = "Select Time2";
-
+  String _durationFrom = "Select Time";
+  String _durationTo = "Select Time";
   String _location = "Select Location";
+  int _contactTracingTableSize = 0;
   LatLng _traceLocation = LatLng(7.1930961, 80.2648257);
-  String _searchAddress = "";
   LatLng cameraPosition = LatLng(7.1930961, 80.2648257);
+
   late GoogleMapController _googleMapController;
   List<Marker> myMarker = [];
 
@@ -61,19 +61,16 @@ class _SubmitReadingsState extends State<SubmitReadings> {
     '35.0°C - 34.5°C'
   ];
 
-  List rows = [
-    {
-      "date": '21/02/01',
-      "duration": '06.00 - 06.15',
-      "location": '7.1930961, 80.2648257'
-    },
+  List<DataRow> dataRows = [
+    DataRow(
+      cells: [
+        DataCell(Text("Select a Date!", textAlign: TextAlign.start,), placeholder: true,),
+        DataCell(Text("Select a Duration!", textAlign: TextAlign.start,), placeholder: true),
+        DataCell(Text("Select a Location!", textAlign: TextAlign.start,), placeholder: true),
+      ],
+    )
   ];
 
-  List cols = [
-    {"title": 'Date', 'width': 0.3, 'key': 'date'},
-    {"title": 'Duration', 'widthFactor': 0.25, 'key': 'duration'},
-    {"title": 'Location', 'widthFactor': 0.5, 'key': 'location'},
-  ];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -83,7 +80,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate)
       setState(() {
-        _dateOfContact = new DateFormat.yMMMMd("en_US").format(selectedDate);
+        _dateOfContact = new DateFormat.yMd("en_US").format(selectedDate);
       });
   }
 
@@ -116,24 +113,10 @@ class _SubmitReadingsState extends State<SubmitReadings> {
       });
   }
 
-  void _addNewRow() {
-    setState(() {
-      rows.add({
-        "date": '21/02/01',
-        "duration": '06.00 - 06.15',
-        "location": '7.1930961, 80.2648257'
-      });
-    });
-  }
-
-  void _printEditedRows() {
-    List editedRows = _editableKey.currentState!.editedRows;
-    print(editedRows);
-  }
 
   @override
   Widget build(BuildContext context) {
-    var doLogin = () {
+    var doSubmit = () {
       final form = formKey.currentState;
 
       if (form != null && form.validate()) {
@@ -146,9 +129,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
           "bodyTemp": _temperature
         };
 
-        http
-            .post(
-          Uri.parse(Constants.BASEURL),
+        http.post(Uri.parse(Constants.BASEURL),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
@@ -324,8 +305,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                                         Container(
                                           height: 300,
                                           child: GoogleMap(
-                                              initialCameraPosition:
-                                                  CameraPosition(
+                                              initialCameraPosition: CameraPosition(
                                                 target: cameraPosition,
                                                 zoom: 14.0,
                                               ),
@@ -333,32 +313,16 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                                               myLocationEnabled: true,
                                               onMapCreated: (controller) {
                                                 setState(() {
-                                                  _googleMapController =
-                                                      controller;
-                                                  _googleMapController
-                                                      .animateCamera(CameraUpdate
-                                                          .newCameraPosition(
-                                                              CameraPosition(
-                                                                  target:
-                                                                      cameraPosition,
-                                                                  zoom: 14.0)));
-                                                  new Marker(
-                                                    icon: BitmapDescriptor
-                                                        .defaultMarker,
-                                                    markerId: MarkerId(
-                                                        "currentPosition"),
-                                                    position: cameraPosition,
-                                                    infoWindow: InfoWindow(
-                                                        title: "userMarker",
-                                                        snippet: '*'),
-                                                  );
+                                                  _googleMapController = controller;
+                                                  _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: cameraPosition, zoom: 14.0)));
+                                                  new Marker(icon: BitmapDescriptor.defaultMarker, markerId: MarkerId("currentPosition"), position: cameraPosition, infoWindow: InfoWindow(title: "userMarker", snippet: '*'),);
                                                 });
                                               },
                                               onTap: (coordinate) {
                                                 setState(() {
                                                   // _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
                                                   _traceLocation = coordinate;
-                                                  print(_traceLocation);
+                                                  _location = "Latitude: "+ _traceLocation.latitude.toString() + "\nLongitude: " + _traceLocation.longitude.toString();
                                                   myMarker = [];
                                                   myMarker.add(Marker(
                                                     markerId: MarkerId(
@@ -389,7 +353,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                                 color: Colors.blue,
                                 size: 35,
                               ),
-                              onPressed: () {},
+                              onPressed: _addToTable,
                             ),
                             Text(
                               "Add to Table",style: TextStyle(fontWeight: FontWeight.bold),
@@ -417,29 +381,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                       DataColumn(
                           label: Text("Location", textAlign: TextAlign.start)),
                     ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(
-                          Text(
-                            "Select a Date!",
-                            textAlign: TextAlign.start,
-                          ),
-                          placeholder: true,
-                        ),
-                        DataCell(
-                            Text(
-                              "Select a Duration!",
-                              textAlign: TextAlign.start,
-                            ),
-                            placeholder: true),
-                        DataCell(
-                            Text(
-                              "Select a Location!",
-                              textAlign: TextAlign.start,
-                            ),
-                            placeholder: true),
-                      ])
-                    ],
+                    rows: dataRows,
                   ),
                 ),
                 SizedBox(
@@ -532,7 +474,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                 SizedBox(
                   height: 20.0,
                 ),
-                longButtons("Submit", doLogin),
+                longButtons("Submit", doSubmit),
               ],
             ),
           ),
@@ -551,5 +493,46 @@ class _SubmitReadingsState extends State<SubmitReadings> {
     );
   }
 
+  void _addToTable(){
+    setState(() {
+      print("Start");
+      print(_dateOfContact);
+      print(_durationFrom);
+      print(_durationTo);
+      print(_traceLocation.longitude);
+      print(_traceLocation.latitude);
+      print("End");
+
+      if (_dateOfContact.contains("Select")) {
+        _showToast(context, "Please Select a Date");
+      }
+      if (_durationFrom.contains("Select") || _durationTo.contains("Select")) {
+        _showToast(context, "Please Select a Duration");
+      }
+      if (_location.contains("Select")) {
+        _showToast(context, "Please Select a Location");
+      }
+      if (_contactTracingTableSize == 0) {
+        dataRows = [
+          DataRow(
+            cells: [
+              DataCell(Container(width: 80, child: Text(_dateOfContact, textAlign: TextAlign.left,),),),
+              DataCell(Container(width: 60, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
+              DataCell(Container(width: 150, child: Text("(" + _traceLocation.latitude.toString() + " ,\n" + _traceLocation.longitude.toString() + ")", textAlign: TextAlign.start,),),)
+            ],
+          )
+        ];
+      } else {
+        DataRow newDataRow = DataRow(
+            cells: [
+              DataCell(Container(width: 80, child: Text(_dateOfContact, textAlign: TextAlign.left,),),),
+              DataCell(Container(width: 60, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
+              DataCell(Container(width: 150, child: Text("(" + _traceLocation.latitude.toString() + " ,\n" + _traceLocation.longitude.toString() + ")", textAlign: TextAlign.start,),),)
+            ]);
+        dataRows.add(newDataRow);
+      }
+      _contactTracingTableSize = 1;
+    });
+  }
   void _searchNavigate() {}
 }
