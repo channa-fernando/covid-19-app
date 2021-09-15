@@ -92,7 +92,7 @@ class _CovidDetailsState extends State<CovidDetails> {
                       width: double.infinity,
                       height: 25,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.grey[50],
                         borderRadius: new BorderRadius.vertical(
                           top: Radius.elliptical(150, 30),
                         ),
@@ -111,7 +111,7 @@ class _CovidDetailsState extends State<CovidDetails> {
                   viewportFraction: 0.9,
                   initialPage: 0,
                   enlargeCenterPage: true,
-                  autoPlay: false,
+                  autoPlay: true,
                   enableInfiniteScroll: true,
                   autoPlayInterval: Duration(seconds: 2),
                   autoPlayAnimationDuration: Duration(milliseconds: 2000),

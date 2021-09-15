@@ -179,7 +179,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                     width: double.infinity,
                     height: 25,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.grey[50],
                       borderRadius: new BorderRadius.vertical(
                         top: Radius.elliptical(150, 30),
                       ),
@@ -430,7 +430,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                 ),
                 Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

@@ -244,20 +244,6 @@ class _RegisterState extends State<Register> {
                 SizedBox(
                   height: 5.0,
                 ),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    value: dropdownvalue,
-                    icon: Icon(Icons.keyboard_arrow_down),
-                    items: items.map((String items) {
-                      return DropdownMenuItem(value: items, child: Text(items));
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownvalue = newValue!;
-                      });
-                    },
-                  ),
-                ),
                 longButtons('Register', doRegister),
               ],
             ),
