@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/screen/googlemap.dart';
+import 'package:untitled/screen/submitreadings.dart';
+import 'package:untitled/screen/mapPopup.dart';
 
 import 'coviddetails.dart';
 
@@ -11,37 +14,34 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard> {
   int _selectedIndex = 0; //New
-
-  final _pageOptions = [CovidDetails(), CovidDetails(), CovidDetails()];
+  final _pageOptions = [CovidDetails(), SubmitReadings(locationSelectedFromMap: '',), MapView()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BottomNavigationBar Demo'),
-      ),
       body: _pageOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        iconSize: 20,
-        selectedIconTheme: IconThemeData(color: Colors.amberAccent, size: 40),
-        selectedItemColor: Colors.amberAccent,
-        unselectedItemColor: Colors.deepOrangeAccent,
+        iconSize: 25,
+        selectedIconTheme: IconThemeData(color: Colors.amberAccent, size: 38, ),
+        selectedItemColor: Colors.white,
+
+        unselectedItemColor: Colors.white,
         backgroundColor: Colors.blueAccent,
         currentIndex: _selectedIndex,
         //New
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.call),
-            label: 'Calls',
+            icon: Icon(Icons.home),
+            label: 'Summery',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.camera),
-            label: 'Camera',
+            icon: Icon(Icons.add_circle_rounded),
+            label: 'Report Incident',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
+            icon: Icon(Icons.map),
+            label: 'Contact Tracing',
           ),
         ],
       ),

@@ -30,8 +30,12 @@ dependencies:
   another_flushbar: ^1.10.24
   carousel_slider: ^4.0.0
   email_validator: ^2.0.1
-
-
+  google_maps_flutter: ^2.0.8
+  location: ^4.3.0
+  geolocator: ^7.6.0
+  editable: ^2.0.0
+  intl: ^0.17.0
+  flutter_google_places: ^0.3.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
@@ -45,8 +49,15 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+
   assets:
-    - assets/images/
+    - assets/images/banner1.jpg
+    - assets/images/banner2.jpg
+    - assets/images/banner3.jpg
+    - assets/images/banner4.jpg
+    - assets/images/banner5.jpg
+    - assets/pngs/icon1.gif
+    - assets/pngs/icon2.gif
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
