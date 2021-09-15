@@ -34,6 +34,7 @@ class _MapViewState extends State<MapView> {
         ),
           mapType: MapType.normal,
           myLocationEnabled: true,
+          markers: Set.from(myMarker),
           onMapCreated: (controller){
            setState(() {
              _googleMapController = controller;
@@ -70,4 +71,6 @@ class _MapViewState extends State<MapView> {
       currentPosition = LatLng(position.latitude, position.longitude);
     });
   }
+
+
 }

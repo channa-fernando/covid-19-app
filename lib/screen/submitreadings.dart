@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:untitled/screen/mapPopup.dart';
 import 'package:untitled/utility/constants.dart';
 import 'package:untitled/utility/widgets.dart';
 
 class SubmitReadings extends StatefulWidget {
-  const SubmitReadings({Key? key}) : super(key: key);
+  final String locationSelectedFromMap;
+  const SubmitReadings({ Key? key, required this.locationSelectedFromMap }) : super(key: key);
 
   @override
   _SubmitReadingsState createState() => _SubmitReadingsState();
@@ -148,11 +150,47 @@ class _SubmitReadingsState extends State<SubmitReadings> {
       }
     };
 
-    return Scaffold(
+    return SafeArea(child: Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(90.0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                  color: Colors.blue,
+                  width: double.infinity,
+                  height: 65,
+                  alignment: Alignment(-0.75, 0.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      IconButton(onPressed: (){}, icon: Icon(Icons.menu, size: 25,color: Colors.white,)),
+                      SizedBox(
+                        width: 12.0,
+                      ),
+                      Text("Report Incident",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 25.0),),
+                    ],
+                  )
+
+              ),
+              Container(
+                color: Colors.blue,
+                child: Container(
+                    width: double.infinity,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: new BorderRadius.vertical(
+                        top: Radius.elliptical(150, 30),
+                      ),
+                    )),
+              ),]
+        ),
+      ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
-          padding: EdgeInsets.all(25.0),
+          padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 5.0),
           child: Form(
             key: formKey,
             child: Column(
@@ -290,52 +328,55 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                           Text(_location),
                           IconButton(
                             icon: Icon(Icons.place_rounded),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                  context: context,
-                                  enableDrag: false,
-                                  builder: (BuildContext context) {
-                                    return ListView(
-                                      padding: EdgeInsets.all(2.0),
-                                      children: [
-                                        TextField(
-                                          decoration: InputDecoration(
-                                              hintText: " Pick a Location"),
-                                        ),
-                                        Container(
-                                          height: 300,
-                                          child: GoogleMap(
-                                              initialCameraPosition: CameraPosition(
-                                                target: cameraPosition,
-                                                zoom: 14.0,
-                                              ),
-                                              mapType: MapType.normal,
-                                              myLocationEnabled: true,
-                                              onMapCreated: (controller) {
-                                                setState(() {
-                                                  _googleMapController = controller;
-                                                  _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: cameraPosition, zoom: 14.0)));
-                                                  new Marker(icon: BitmapDescriptor.defaultMarker, markerId: MarkerId("currentPosition"), position: cameraPosition, infoWindow: InfoWindow(title: "userMarker", snippet: '*'),);
-                                                });
-                                              },
-                                              onTap: (coordinate) {
-                                                setState(() {
-                                                  // _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
-                                                  _traceLocation = coordinate;
-                                                  _location = "Latitude: "+ _traceLocation.latitude.toString() + "\nLongitude: " + _traceLocation.longitude.toString();
-                                                  myMarker = [];
-                                                  myMarker.add(Marker(
-                                                    markerId: MarkerId(
-                                                        coordinate.toString()),
-                                                    position: coordinate,
-                                                  ));
-                                                });
-                                              }),
-                                        )
-                                      ],
-                                    );
-                                  });
-                            },
+                            onPressed: _openAddEntryDialog,
+                            //TODO:Code for bottom small page
+                            // onPressed: () {
+                            //   showModalBottomSheet(
+                            //       context: context,
+                            //       enableDrag: false,
+                            //       builder: (BuildContext context) {
+                            //         return ListView(
+                            //           padding: EdgeInsets.all(2.0),
+                            //           children: [
+                            //             TextField(
+                            //               decoration: InputDecoration(
+                            //                   hintText: " Pick a Location"),
+                            //             ),
+                            //             Container(
+                            //               height: 300,
+                            //               child: GoogleMap(
+                            //                   initialCameraPosition: CameraPosition(
+                            //                     target: cameraPosition,
+                            //                     zoom: 14.0,
+                            //                   ),
+                            //                   markers: Set.from(myMarker),
+                            //                   mapType: MapType.normal,
+                            //                   myLocationEnabled: true,
+                            //                   onMapCreated: (controller) {
+                            //                     setState(() {
+                            //                       _googleMapController = controller;
+                            //                       _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: cameraPosition, zoom: 14.0)));
+                            //                     });
+                            //                   },
+                            //                   onTap: (coordinate) {
+                            //                     setState(() {
+                            //                       // _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
+                            //                       _traceLocation = coordinate;
+                            //                       _location = "Latitude: "+ _traceLocation.latitude.toString() + "\nLongitude: " + _traceLocation.longitude.toString();
+                            //                       myMarker = [];
+                            //                       myMarker.add(Marker(
+                            //                         markerId: MarkerId(coordinate.toString()),
+                            //                         position: coordinate,
+                            //                       ));
+                            //                     });
+                            //                   }),
+                            //             )
+                            //           ],
+                            //         );
+                            //       })
+                            //   ;
+                            // },
+                            // TODO:Code end
                           ),
                         ],
                       )),
@@ -365,7 +406,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                   ),
                 ),
                 SizedBox(
-                  height: 5.0,
+                  height: 15.0,
                 ),
                 Container(
                   color: Colors.white,
@@ -480,6 +521,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -518,7 +560,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
             cells: [
               DataCell(Container(width: 80, child: Text(_dateOfContact, textAlign: TextAlign.left,),),),
               DataCell(Container(width: 70, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
-              DataCell(Container(width: 150, child: Text("(" + _traceLocation.latitude.toString() + " ,\n" + _traceLocation.longitude.toString() + ")", textAlign: TextAlign.start,),),)
+              DataCell(Container(width: 150, child: Text(_location, textAlign: TextAlign.start,),),)
             ],
           )
         ];
@@ -527,12 +569,26 @@ class _SubmitReadingsState extends State<SubmitReadings> {
             cells: [
               DataCell(Container(width: 80, child: Text(_dateOfContact, textAlign: TextAlign.left,),),),
               DataCell(Container(width: 70, child: Text(_durationFrom + " - " + _durationTo, textAlign: TextAlign.left,),),),
-              DataCell(Container(width: 150, child: Text("(" + _traceLocation.latitude.toString() + " ,\n" + _traceLocation.longitude.toString() + ")", textAlign: TextAlign.start,),),)
+              DataCell(Container(width: 150, child: Text(_location, textAlign: TextAlign.start,),),)
             ]);
         dataRows.add(newDataRow);
       }
       _contactTracingTableSize = 1;
     });
+  }
+
+  Future _openAddEntryDialog() async {
+    SubmitReadings? save = await Navigator.of(context).push(new MaterialPageRoute<SubmitReadings>(
+        builder: (BuildContext context) {
+          return new AddEntryDialog();
+        },
+        fullscreenDialog: true
+    ));
+    if (save != null) {
+      setState(() {
+        _location = save.locationSelectedFromMap;
+      });
+    }
   }
   void _searchNavigate() {}
 }
