@@ -27,34 +27,35 @@ class _LoginState extends State<Login> {
 
       if (form != null && form.validate()) {
         form.save();
+        Navigator.pushReplacementNamed(context, '/secure/dashboard');
 
-        final Map<String, dynamic> requestBody = {
-          "email": _userName,
-          "passWord": _passWord,
-        };
-
-        var response = await http.post(
-          Uri.parse(Constants.BASEURL),
-          headers: <String, String>{
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(requestBody),
-        );
-
-        print(response.body);
-        if (response.statusCode == 200) {
-            _showToast(context, 'Login Success!');
-            // LoginResponseDTO loginResponseDTO = LoginResponseDTO.fromJson(jsonDecode(response.body));
-            // final prefs = await SharedPreferences.getInstance();
-            // prefs.setString('userId', loginResponseDTO.userId);
-            // prefs.setString('token', loginResponseDTO.token);
-            // prefs.setString('userName', loginResponseDTO.userName);
-            // prefs.setString('address', loginResponseDTO.address);
-            Navigator.pushReplacementNamed(context, '/secure/dashboard');
-
-        } else {
-            _showToast(context, 'Bad Credentials!');
-          }
+        // final Map<String, dynamic> requestBody = {
+        //   "email": _userName,
+        //   "passWord": _passWord,
+        // };
+        //
+        // var response = await http.post(
+        //   Uri.parse(Constants.BASEURL),
+        //   headers: <String, String>{
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: jsonEncode(requestBody),
+        // );
+        //
+        // print(response.body);
+        // if (response.statusCode == 200) {
+        //     _showToast(context, 'Login Success!');
+        //     LoginResponseDTO loginResponseDTO = LoginResponseDTO.fromJson(jsonDecode(response.body));
+        //     final prefs = await SharedPreferences.getInstance();
+        //     prefs.setString('userId', loginResponseDTO.userId);
+        //     prefs.setString('token', loginResponseDTO.token);
+        //     prefs.setString('userName', loginResponseDTO.userName);
+        //     prefs.setString('address', loginResponseDTO.address);
+        //     Navigator.pushReplacementNamed(context, '/secure/dashboard');
+        //
+        // } else {
+        //     _showToast(context, 'Bad Credentials!');
+        //   }
       }
       else {
         _showToast(context, 'Please Resubmit Registration Details!');

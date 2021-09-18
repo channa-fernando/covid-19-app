@@ -37,7 +37,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
 
   late GoogleMapController _googleMapController;
   List<Marker> myMarker = [];
-
+  var contactDataMapArray = <Map>[];
   String _category = 'Home Quarantine Patient';
   var categoryList = [
     'Home Quarantine Patient',
@@ -118,7 +118,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
 
   @override
   Widget build(BuildContext context) {
-    var doSubmit = () {
+    var doSubmit = () async {
       final form = formKey.currentState;
 
       if (form != null && form.validate()) {
@@ -128,24 +128,26 @@ class _SubmitReadingsState extends State<SubmitReadings> {
           "quarantineCenterContact": _emergencyContact,
           "quarantineCenter": _address,
           "spo2Level": _spo2,
-          "bodyTemp": _temperature
+          "bodyTemp": _temperature,
+          "tracing": contactDataMapArray
         };
-
-        http.post(Uri.parse(Constants.BASEURL),
+        var response = await http.post(
+          Uri.parse(Constants.BASEURL +"/data"+ "/submitreadings" ),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
           body: jsonEncode(requestBody),
-        )
-            .then((response) {
-          if (response.statusCode == 200) {
-            _showToast(context, 'Login Success!');
-            Navigator.pushReplacementNamed(context, '/secure/dashboard');
-          } else {
-            _showToast(context, 'Bad Credentials!');
-          }
-        });
-      } else {
+        );
+
+        print(response.body);
+        if (response.statusCode == 200) {
+          _showToast(context, 'Data Submitted Successfully!');
+
+        } else {
+          _showToast(context, 'Bad Data!');
+        }
+      }
+      else {
         _showToast(context, 'Please Resubmit Registration Details!');
       }
     };
@@ -329,54 +331,6 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                           IconButton(
                             icon: Icon(Icons.place_rounded),
                             onPressed: _openAddEntryDialog,
-                            //TODO:Code for bottom small page
-                            // onPressed: () {
-                            //   showModalBottomSheet(
-                            //       context: context,
-                            //       enableDrag: false,
-                            //       builder: (BuildContext context) {
-                            //         return ListView(
-                            //           padding: EdgeInsets.all(2.0),
-                            //           children: [
-                            //             TextField(
-                            //               decoration: InputDecoration(
-                            //                   hintText: " Pick a Location"),
-                            //             ),
-                            //             Container(
-                            //               height: 300,
-                            //               child: GoogleMap(
-                            //                   initialCameraPosition: CameraPosition(
-                            //                     target: cameraPosition,
-                            //                     zoom: 14.0,
-                            //                   ),
-                            //                   markers: Set.from(myMarker),
-                            //                   mapType: MapType.normal,
-                            //                   myLocationEnabled: true,
-                            //                   onMapCreated: (controller) {
-                            //                     setState(() {
-                            //                       _googleMapController = controller;
-                            //                       _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: cameraPosition, zoom: 14.0)));
-                            //                     });
-                            //                   },
-                            //                   onTap: (coordinate) {
-                            //                     setState(() {
-                            //                       // _googleMapController.animateCamera(CameraUpdate.newLatLng(coordinate));
-                            //                       _traceLocation = coordinate;
-                            //                       _location = "Latitude: "+ _traceLocation.latitude.toString() + "\nLongitude: " + _traceLocation.longitude.toString();
-                            //                       myMarker = [];
-                            //                       myMarker.add(Marker(
-                            //                         markerId: MarkerId(coordinate.toString()),
-                            //                         position: coordinate,
-                            //                       ));
-                            //                     });
-                            //                   }),
-                            //             )
-                            //           ],
-                            //         );
-                            //       })
-                            //   ;
-                            // },
-                            // TODO:Code end
                           ),
                         ],
                       )),
@@ -554,6 +508,14 @@ class _SubmitReadingsState extends State<SubmitReadings> {
       if (_location.contains("Select")) {
         _showToast(context, "Please Select a Location");
       }
+      final Map<String, String> contactMap = {
+        "latLang": _location,
+        "date": _dateOfContact,
+        "from":_durationFrom,
+        "to":_durationTo
+      };
+      contactDataMapArray.add(contactMap);
+      print(contactDataMapArray);
       if (_contactTracingTableSize == 0) {
         dataRows = [
           DataRow(

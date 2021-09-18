@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:untitled/dto/CircleResponseDTO.dart';
+import 'package:untitled/dto/LatLangDTO.dart';
 import 'package:untitled/utility/constants.dart';
 
 class MapView extends StatefulWidget {
@@ -19,9 +21,12 @@ class _MapViewState extends State<MapView> {
   LatLng currentPosition = LatLng(7.1930961, 80.2648257);
 
   List<Marker> myMarker = <Marker>[];
+  List<Circle> myCircles = <Circle>[];
+
   String _dateOfContact = "Date  ";
   String _durationFrom = "From  ";
   String _durationTo = "To   ";
+  late BitmapDescriptor icon;
 
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedInitialFromTime = TimeOfDay.now();
@@ -31,6 +36,7 @@ class _MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     _getUserLocation();
+    _getIcons();
   }
 
   @override
@@ -50,19 +56,20 @@ class _MapViewState extends State<MapView> {
                   mapType: MapType.normal,
                   myLocationEnabled: true,
                   markers: Set.from(myMarker),
+                  circles: Set.from(myCircles),
                   onMapCreated: (controller) {
                     setState(() {
                       _googleMapController = controller;
                       _googleMapController.animateCamera(
                           CameraUpdate.newCameraPosition(CameraPosition(
                               target: currentPosition, zoom: 11.0)));
-                      new Marker(
+                      myMarker.add(new Marker(
                         icon: BitmapDescriptor.defaultMarker,
                         markerId: MarkerId("currentPosition"),
                         position: currentPosition,
                         infoWindow:
                             InfoWindow(title: "userMarker", snippet: '*'),
-                      );
+                      ));
                     });
                   },
                   onTap: (coordinate) {
@@ -74,6 +81,7 @@ class _MapViewState extends State<MapView> {
                         markerId: MarkerId(coordinate.toString()),
                         position: coordinate,
                       ));
+
                     });
                   }),
             ),
@@ -173,6 +181,15 @@ class _MapViewState extends State<MapView> {
     });
   }
 
+  void _getIcons() async {
+    var icon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 3.2),
+        "assets/pngs/marker.png");
+    setState(() {
+      this.icon = icon;
+    });
+  }
+
   void _getMarkers() async {
     final Map<String, dynamic> requestBody = {
       "date": _dateOfContact,
@@ -182,7 +199,7 @@ class _MapViewState extends State<MapView> {
     print(requestBody);
 
     var response = await http.post(
-      Uri.parse(Constants.GET_MARKERS),
+      Uri.parse(Constants.BASEURL + "/data" + "/getcircles"),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -191,6 +208,32 @@ class _MapViewState extends State<MapView> {
     print(response.body);
     if (response.statusCode == 200) {
       print(response.body);
+      CircleResponseDTO circleResponseDTO = CircleResponseDTO.fromJson(jsonDecode(response.body));
+      List<LatLang> positions = circleResponseDTO.latLangList;
+      myCircles = [];
+      myMarker = [];
+      for(var item in positions){
+        setState(() {
+          myCircles.add(Circle(
+            circleId: CircleId(DateTime.now().toString()),
+            center: LatLng(double.parse(item.longitude), double.parse(item.latitude)),
+            radius:30,
+            fillColor:Colors.redAccent,
+            strokeColor: Colors.black12,
+            strokeWidth: 3,
+
+          ));
+          myMarker.add(Marker(
+            markerId: MarkerId(DateTime.now().toString()),
+            position: LatLng(double.parse(item.longitude), double.parse(item.latitude)),
+            infoWindow: InfoWindow(title: "Risk Area", snippet: 'Covid Contact Area',),
+
+          ));
+        });
+        print("Location From API:");
+        print(double.parse(item.longitude));
+        print(double.parse(item.latitude));
+      }
     } else {
       _showToast(context, 'Data Loading Failed!');
     }
