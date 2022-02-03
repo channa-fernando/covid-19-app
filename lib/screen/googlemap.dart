@@ -98,7 +98,15 @@ class _MapViewState extends State<MapView> {
                         "Contact Tracing",
                         style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
                       ),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      Text(
+                        "Search",
+                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0),
+                      ),
                       IconButton(onPressed: _getMarkers, icon: Icon(Icons.search_outlined), iconSize: 35,),
+
                     ],
                   ),
                   Container(
@@ -211,12 +219,15 @@ class _MapViewState extends State<MapView> {
       body: jsonEncode(requestBody),
     );
     print(response.body);
+    _googleMapController.dispose();
     if (response.statusCode == 200) {
       print(response.body);
       CircleResponseDTO circleResponseDTO = CircleResponseDTO.fromJson(jsonDecode(response.body));
       List<LatLang> positions = circleResponseDTO.latLangList;
-      myCircles = [];
-      myMarker = [];
+      setState(() {
+        myCircles = [];
+        myMarker = [];
+      });
       for(var item in positions){
         setState(() {
           myCircles.add(Circle(
@@ -238,6 +249,8 @@ class _MapViewState extends State<MapView> {
         print("Location From API:");
         print(double.parse(item.longitude));
         print(double.parse(item.latitude));
+        _showToast(context, 'Data Loading Successful!');
+
       }
     } else {
       _showToast(context, 'Data Loading Failed!');
