@@ -23,20 +23,12 @@ class _RegisterState extends State<Register> {
   String _gramaSewaWasam = "";
   String _fullName = "";
   String _address = "";
+  List<String> _locations = ["Ampara", "Anuradhapura", "Badulla", "Batticaloa"];
+  String _selectedLocation = "Ampara";
 
   final formKey = GlobalKey<FormState>();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
-
-  String dropdownvalue = 'Apple';
-  var items = [
-    'Apple',
-    'Banana',
-    'Grapes',
-    'Orange',
-    'watermelon',
-    'Pineapple'
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +46,12 @@ class _RegisterState extends State<Register> {
           "contactNumber": _contactNumber,
           "contactNumberPHI": _contactNumberPHI,
           "gramaSewa": _gramaSewaWasam,
-          "policaStation": _nearestPoliceStation
+          "policeStation": _nearestPoliceStation
         };
 
         http
             .post(
-          Uri.parse(Constants.BASEURL),
+          Uri.parse(Constants.BASEURL + "/userAccount/saveUpdate"),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
@@ -71,7 +63,7 @@ class _RegisterState extends State<Register> {
                 'User Registration Success! Please Login with credentials');
             Navigator.pushReplacementNamed(context, '/login');
           } else {
-            _showToast(context, 'Gateway failure! Please try again later');
+            _showToast(context, 'Internal Server Error! Please try again later');
           }
         });
       } else {
@@ -140,6 +132,28 @@ class _RegisterState extends State<Register> {
                 SizedBox(
                   height: 20.0,
                 ),
+                // Text("District"),
+                // SizedBox(
+                //   height: 5.0,
+                // ),
+                // DropdownButton(
+                //   hint: Text('Please choose a location'), // Not necessary for Option 1
+                //   value: _selectedLocation,
+                //   onChanged: (String? newValue) {
+                //     setState(() {
+                //       _selectedLocation = newValue!;
+                //     });
+                //   },
+                //   items: _locations.map((location) {
+                //     return DropdownMenuItem(
+                //       child: new Text(location),
+                //       value: location,
+                //     );
+                //   }).toList(),
+                // ),
+                // SizedBox(
+                //   height: 20.0,
+                // ),
                 Text("Contact Number PHI Officer"),
                 SizedBox(
                   height: 5.0,
@@ -239,10 +253,6 @@ class _RegisterState extends State<Register> {
                 ),
                 SizedBox(
                   height: 20.0,
-                ),
-                Text("Please Select Your District"),
-                SizedBox(
-                  height: 5.0,
                 ),
                 longButtons('Register', doRegister),
               ],

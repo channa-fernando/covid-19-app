@@ -24,38 +24,38 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     var doLogin = () async {
       final form = formKey.currentState;
+      final prefs = await SharedPreferences.getInstance();
 
       if (form != null && form.validate()) {
         form.save();
-        Navigator.pushReplacementNamed(context, '/secure/dashboard');
+        // Navigator.pushReplacementNamed(context, '/secure/dashboard');
 
-        // final Map<String, dynamic> requestBody = {
-        //   "email": _userName,
-        //   "passWord": _passWord,
-        // };
-        //
-        // var response = await http.post(
-        //   Uri.parse(Constants.BASEURL),
-        //   headers: <String, String>{
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: jsonEncode(requestBody),
-        // );
-        //
-        // print(response.body);
-        // if (response.statusCode == 200) {
-        //     _showToast(context, 'Login Success!');
-        //     LoginResponseDTO loginResponseDTO = LoginResponseDTO.fromJson(jsonDecode(response.body));
-        //     final prefs = await SharedPreferences.getInstance();
-        //     prefs.setString('userId', loginResponseDTO.userId);
-        //     prefs.setString('token', loginResponseDTO.token);
-        //     prefs.setString('userName', loginResponseDTO.userName);
-        //     prefs.setString('address', loginResponseDTO.address);
-        //     Navigator.pushReplacementNamed(context, '/secure/dashboard');
-        //
-        // } else {
-        //     _showToast(context, 'Bad Credentials!');
-        //   }
+        final Map<String, dynamic> requestBody = {
+          "email": _userName,
+          "passWord": _passWord,
+        };
+
+        var response = await http.post(
+          Uri.parse(Constants.BASEURL + "/userAccount/login"),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(requestBody),
+        );
+
+        print(response.body);
+        if (response.statusCode == 200) {
+            _showToast(context, 'Login Success!');
+            LoginResponseDTO loginResponseDTO = LoginResponseDTO.fromJson(jsonDecode(response.body));
+            prefs.setString('userId', loginResponseDTO.userId);
+            prefs.setString('token', loginResponseDTO.token);
+            prefs.setString('userName', loginResponseDTO.userName);
+            prefs.setString('address', loginResponseDTO.address);
+            Navigator.pushReplacementNamed(context, '/secure/dashboard');
+
+        } else {
+            _showToast(context, 'Bad Credentials!');
+          }
       }
       else {
         _showToast(context, 'Please Resubmit Registration Details!');
@@ -86,54 +86,59 @@ class _LoginState extends State<Login> {
         title: Text("Login"),
       ),
       body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(40.0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 15.0,
-                ),
-                Text("Email"),
-                SizedBox(
-                  height: 5.0,
-                ),
-                TextFormField(
-                  autofocus: false,
-                  validator: (value) =>
-                      EmailValidator.validate(value!) ? null : "Invalid Email!",
-                  onSaved: (value) => _userName = value!,
-                  decoration: buildInputDecoration("Enter Email!", Icons.email),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Text("Password"),
-                SizedBox(
-                  height: 5.0,
-                ),
-                TextFormField(
-                  autofocus: false,
-                  obscureText: true,
-                  validator: (value) =>
-                      value!.isEmpty ? "Please Enter Password" : null,
-                  onSaved: (value) => _passWord = value!,
-                  decoration:
-                      buildInputDecoration("Enter Password!", Icons.lock),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                longButtons("Login", doLogin),
-                SizedBox(
-                  height: 8.0,
-                ),
-                forgotLabel
-              ],
-            ),
+        child: Column(
+          children: [Image.asset(
+            'assets/images/Logo.jpg',
           ),
+            Container(
+            padding: const EdgeInsets.fromLTRB(40, 10, 40, 40),
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Text("Email"),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  TextFormField(
+                    autofocus: false,
+                    validator: (value) =>
+                    EmailValidator.validate(value!) ? null : "Invalid Email!",
+                    onSaved: (value) => _userName = value!,
+                    decoration: buildInputDecoration("Enter Email!", Icons.email),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Text("Password"),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  TextFormField(
+                    autofocus: false,
+                    obscureText: true,
+                    validator: (value) =>
+                    value!.isEmpty ? "Please Enter Password" : null,
+                    onSaved: (value) => _passWord = value!,
+                    decoration:
+                    buildInputDecoration("Enter Password!", Icons.lock),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  longButtons("Login", doLogin),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  forgotLabel
+                ],
+              ),
+            ),
+          ),]
         ),
       ),
     );

@@ -113,7 +113,7 @@ class _CovidDetailsState extends State<CovidDetails> {
                   enlargeCenterPage: true,
                   autoPlay: true,
                   enableInfiniteScroll: true,
-                  autoPlayInterval: Duration(seconds: 2),
+                  autoPlayInterval: Duration(seconds: 10),
                   autoPlayAnimationDuration: Duration(milliseconds: 2000),
                   autoPlayCurve: Curves.fastOutSlowIn,
                   onPageChanged: callBackFunction,

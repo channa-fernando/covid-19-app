@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/dto/CircleResponseDTO.dart';
 import 'package:untitled/dto/LatLangDTO.dart';
 import 'package:untitled/utility/constants.dart';
@@ -94,7 +95,7 @@ class _MapViewState extends State<MapView> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "Find Contacts",
+                        "Contact Tracing",
                         style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
                       ),
                       IconButton(onPressed: _getMarkers, icon: Icon(Icons.search_outlined), iconSize: 35,),
@@ -191,6 +192,9 @@ class _MapViewState extends State<MapView> {
   }
 
   void _getMarkers() async {
+    final prefs = await SharedPreferences.getInstance();
+    String token =  prefs.getString('token')!;
+
     final Map<String, dynamic> requestBody = {
       "date": _dateOfContact,
       "from": _durationFrom,
@@ -202,6 +206,7 @@ class _MapViewState extends State<MapView> {
       Uri.parse(Constants.BASEURL + "/data" + "/getcircles"),
       headers: <String, String>{
         'Content-Type': 'application/json',
+        'Authorization': token
       },
       body: jsonEncode(requestBody),
     );
@@ -257,7 +262,7 @@ class _MapViewState extends State<MapView> {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate)
       setState(() {
-        _dateOfContact = new DateFormat.yMd("en_US").format(selectedDate);
+        _dateOfContact = new DateFormat.yMd("en_US").format(picked);
       });
   }
 
