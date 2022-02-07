@@ -94,7 +94,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
     )
   ];
   String _areYouVaccinated = 'One Dose';
-  var _areYouVaccinatedList = ['One Dose', 'Two Dose', 'Booster', 'No'];
+  var _areYouVaccinatedList = ['One Dose', 'Two Doses', 'Booster', 'No'];
 
   String _areYouLongTermTreat = 'Yes';
   var _areYouLongTermTreatList = ['Yes', 'No'];
@@ -611,7 +611,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                                       )),),
                                     ]),
                                     DataRow(cells: [
-                                      DataCell(Container( child: Text('Did you share a meal or eat in the same table at least once during infectious period?')),),
+                                      DataCell(Container( child: Text('Did you share a meal or eat in the same table at least once during infectious period*?')),),
                                       DataCell(Container(child:DropdownButtonHideUnderline(
                                         child: DropdownButton(
                                           value: _option3,
@@ -810,7 +810,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                                   ],
                                   rows: [
                                     DataRow(cells: [
-                                      DataCell(Container(child: Text('Were you in a gathering (Ex - Meeting, Class, Discussion, Practical) with the index case during the infectious period?')),),
+                                      DataCell(Container(child: Text('Were you in a gathering (Ex - Meeting, Class, Discussion, Practical) with the index case during the infectious period*?')),),
                                       DataCell(Container(child:DropdownButtonHideUnderline(
                                         child: DropdownButton(
                                           value: _option10,
@@ -933,6 +933,12 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                       ],
                     ),
                   ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text("*Infectious period – Two day before sample collection for asymptomatic patients, three days before symptom onset for symptomatic patients.",
+                        style: TextStyle(fontWeight: FontWeight.w400)
                 ),
                 SizedBox(
                   height: 20.0,

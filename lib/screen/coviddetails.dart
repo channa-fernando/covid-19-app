@@ -81,7 +81,7 @@ class _CovidDetailsState extends State<CovidDetails> {
                       SizedBox(
                         width: 12.0,
                       ),
-                      Text("Protect YourSelf",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 23.0),),
+                      Text("Protect Yourself",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 23.0),),
                     ],
                   )
 

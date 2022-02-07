@@ -33,7 +33,7 @@ class _DashBoardState extends State<DashBoard> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Summery',
+            label: 'Summary',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_circle_rounded),
