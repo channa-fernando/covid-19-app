@@ -175,7 +175,8 @@ class _SubmitReadingsState extends State<SubmitReadings> {
           "daysOfContact" : _daysOfContact,
           "daysOfLastContact" :_daysOfLastContact,
           "answersArray": questionAnswersArray,
-          "tracing": contactDataMapArray
+          "tracing": contactDataMapArray,
+          "token": token
         };
         var response = await http.post(
           Uri.parse(Constants.BASEURL +"/data"+ "/submitreadings" ),
@@ -218,6 +219,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                         width: 12.0,
                       ),
                       Text("Report Incident",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 25.0),),
+
                     ],
                   )
 

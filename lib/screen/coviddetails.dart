@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/dto/covidUpdate.dart';
 import 'package:untitled/utility/constants.dart';
 import 'package:untitled/utility/widgets.dart';
+import 'package:untitled/dto/patientReportDTO.dart';
 
 class CovidDetails extends StatefulWidget {
   const CovidDetails({Key? key}) : super(key: key);
@@ -33,7 +34,7 @@ class _CovidDetailsState extends State<CovidDetails> {
   late String _localTotalCases = "";
   late String _localNewDeaths = "";
   late String _localTotalDeaths = "";
-
+  late int _counter = 0;
   String _spo2 = '95% - 100%';
   var spO2List = [
     '95% - 100%',
@@ -42,6 +43,32 @@ class _CovidDetailsState extends State<CovidDetails> {
     '80% - 85%',
     'Below 80%'
   ];
+  final List<String> _names = [
+    'Liam', 'Noah', 'Oliver', 'William', 'Elijah',
+    'James', 'Benjamin', 'Lucas', 'Mason', 'Ethan', 'Alexander'
+  ];
+  int _patientId = 0;
+  var _patientsNames = <String>["1:Channa"];
+
+  String _option1 = 'NotSure';
+  String _option2 = 'NotSure';
+  String _option3 = 'NotSure';
+  String _option4 = 'NotSure';
+  String _option5 = 'NotSure';
+  String _option6 = 'NotSure';
+  String _option7 = 'NotSure';
+  String _option8 = 'NotSure';
+  String _option9 = 'NotSure';
+  String _option10 = 'NotSure';
+  String _option11 = 'NotSure';
+  String _option12 = 'NotSure';
+  String _option13 = 'NotSure';
+  String _option14 = 'NotSure';
+
+  var optionList = [
+    'Yes','No', 'NotSure'
+  ];
+  var questionAnswersArray = [];
 
   String _temperature = '36.5°C - 36.0°C';
   var temperatureList = [
@@ -59,6 +86,7 @@ class _CovidDetailsState extends State<CovidDetails> {
   void initState() {
     super.initState();
     getCovidLiveUpdate();
+    getPatientList();
   }
 
   @override
@@ -82,6 +110,10 @@ class _CovidDetailsState extends State<CovidDetails> {
                         width: 12.0,
                       ),
                       Text("Protect Yourself",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 23.0),),
+                      SizedBox(
+                        width: 100.0,
+                      ),
+                      _bellIconList()
                     ],
                   )
 
@@ -259,7 +291,6 @@ class _CovidDetailsState extends State<CovidDetails> {
                     )
                   ]),
               //New
-
               SizedBox(
                 height: 15.0,
               ),
@@ -390,6 +421,24 @@ class _CovidDetailsState extends State<CovidDetails> {
     }
   }
 
+  void getPatientList() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString("userId");
+    print(Constants.BASEURL + "/monitoring/patientList" + userId.toString());
+    var response = await http.get(Uri.parse(Constants.BASEURL + "/monitoring/notificationList/" + userId.toString()),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        });
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      print("Patients List: " + response.body);
+      _setPatientList(response.body);
+    } else {
+      _showToast(context, 'Data Loading Failed!');
+    }
+  }
+
   void _showToast(BuildContext context, String message) {
     final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
@@ -512,5 +561,625 @@ class _CovidDetailsState extends State<CovidDetails> {
         }
     );
   }
+  void _setBellCounter(int count) {
+    setState(() {
+      _counter= count;
+    });
+  }
+
+  void _setPatientList(String commaSeperatedPatients) {
+    setState(() {
+      List<String> names = commaSeperatedPatients.split(',');
+      names.removeAt(names.length - 1);
+      _patientsNames = names;
+
+      print("_patientsNames: " + _patientsNames.toString());
+      _setBellCounter(_patientsNames.length);
+    });
+  }
+
+  // set up the AlertDialog
+  AlertDialog alert(String title, String content, String dateOfSubmission) => AlertDialog(
+    title: Text("Risk Assessment Report Response"),
+    content: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Text('Patient Name: Mr: ' + title + "\n\n" + "Date of Submission: "+ dateOfSubmission +"\n\n" +"Answers for Risk Assessment: " +"\n"),
+        DefaultTabController(
+          length: 3,
+          child: SizedBox(
+            height: 380.0,
+            child: Column(
+              children: <Widget>[
+                TabBar(
+                  tabs: <Widget>[
+                    Tab(
+                      child: Text("Activity", style: TextStyle(color: Colors.black)),
+
+                    ),
+                    Tab(
+                      child: Text("Work Place", style: TextStyle(color: Colors.black)),
+                    ),
+                    Tab(
+                      child: Text("Gathering", style: TextStyle(color: Colors.black)),
+                    )
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: <Widget>[
+                      Container(
+                        color: Colors.white,
+                        margin: const EdgeInsets.all(10.0),
+                        child: DataTable(
+                          sortAscending: true,
+                          sortColumnIndex: 0,
+                          headingRowHeight: 0,
+                          columnSpacing: 20.0,
+                          columns: [
+                            DataColumn(
+                              label: Text("Date", textAlign: TextAlign.start),
+                            ),
+                            DataColumn(
+                              label: Text("Date", textAlign: TextAlign.start),
+                            )
+                          ],
+                          rows: [
+                            DataRow(cells: [
+                              DataCell(Container(child: Text('Was your colleague wearing mask at all times during the Interaction?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option1,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option1= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Were you wearing a mask during all interactions?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option2,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option2= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Did you share a meal or eat in the same table at least once during infectious period*?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option3,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option3= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container(child: Text('Did you share bottle/glass/tea cup, personal items (pen, purse, keys, books, etc..) at least once during infectious period*')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option4,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option4= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Did you share same transport during infectious period*')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option5,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option5= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Did you share bed room during infectious period*')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option6,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option6= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        color: Colors.white,
+                        margin: const EdgeInsets.all(10.0),
+                        child: DataTable(
+                          sortAscending: true,
+                          sortColumnIndex: 0,
+                          headingRowHeight: 0,
+                          columns: [
+                            DataColumn(
+                              label: Text("Date", textAlign: TextAlign.start),
+                            ),
+                            DataColumn(
+                              label: Text("Date", textAlign: TextAlign.start),
+                            )
+                          ],
+                          rows: [
+                            DataRow(cells: [
+                              DataCell(Container(child: Text('Do you work in same room during infectious period*?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option7,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option7= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Shared work place air conditioned?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option8,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option8= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Work place poorly ventilated or crowded?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option9,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option9= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        color: Colors.white,
+                        margin: const EdgeInsets.all(10.0),
+                        child: DataTable(
+                          sortAscending: true,
+                          sortColumnIndex: 0,
+                          headingRowHeight: 0,
+                          columns: [
+                            DataColumn(
+                              label: Text("Date", textAlign: TextAlign.start),
+                            ),
+                            DataColumn(
+                              label: Text("Date", textAlign: TextAlign.start),
+                            )
+                          ],
+                          rows: [
+                            DataRow(cells: [
+                              DataCell(Container(child: Text('Were you in a gathering (Ex - Meeting, Class, Discussion, Practical) with the index case during the infectious period*?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option10,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option10= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Was the room where the gathering was held filled to more than 50% of capacity?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option11,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option11= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Was the room where gathering was held air conditioned?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option12,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option12= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container(child: Text('Was the room where the gathering was held poorly ventilated')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option13,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option13= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Container( child: Text('Was the gathering held for more than 15 min?')),),
+                              DataCell(Container(child:DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _option14,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  iconSize: 10,
+                                  elevation: 16,
+                                  items: optionList.map((String categorySelected) {
+                                    return DropdownMenuItem(
+                                      value: categorySelected,
+                                      child: Text(
+                                        categorySelected,
+                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _option14= newValue!;
+                                    });
+                                  },
+                                ),
+                              )),),
+                            ]),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+
+    ),
+    actions: [
+      TextButton(
+        onPressed: (){},
+        child: Text("OK"),),
+    ],
+  );
+
+  // set up the Bell Icon List
+  Widget _bellIconList() => Theme(
+      data: Theme.of(context).copyWith(
+        cardColor: Colors.white.withOpacity(0.8),
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      child: PopupMenuButton<String>(
+      itemBuilder: (context) =>
+          _patientsNames.map((item) =>
+              PopupMenuItem<String>(
+                value: item.substring(0,item.indexOf(":")),
+                child: Text(
+                  "Tap to view patient Mr: " + item.substring(item.indexOf(":") + 1,) + "'s Risk Assessment Form",
+                  maxLines: 2,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12.0,
+                  ),
+                ),
+              )).toList(),
+      onSelected: (value) {
+          setState(() {
+            _patientId = int.parse(value);
+            _setBellCounter(_patientsNames.length);
+            _getPatientReport(_patientId);
+          });
+      },
+    child: Stack(
+          children: [
+            Icon(Icons.notifications, size: 30, color: Colors.white,),
+            Container(
+                width: 35,
+                height: 35,
+                alignment: Alignment.topRight,
+                margin: EdgeInsets.only(top: 5),
+                child: Container(
+                  width: 15,
+                  height: 15,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xffc32c37),
+                      border: Border.all(color: Colors.white, width: 1)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Center(
+                      child: Text(
+                        _counter.toString(),
+                        style: TextStyle(fontSize: 10, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+    ),)
+  );
+  String _generateContent(String content){
+    List<String> answers = content.split(',');
+    String formattedAnswers = "";
+    int i = 1;
+    for (var answer in answers) {
+      formattedAnswers+= "\tQuestion " + i.toString() + " : " + answer + "\n";
+      i+=1;
+    }
+    return formattedAnswers;
+  }
+  void _getPatientReport(int patientId) async {
+    var response = await http.get(Uri.parse(Constants.BASEURL + "/monitoring/patientRecords/"+ _patientId.toString()),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        });
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      _showToast(context, 'Data Loading Success!');
+      print(response.body);
+      PatientReportDTO patientReportDTO = PatientReportDTO.fromJson(jsonDecode(response.body));
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert(patientReportDTO.patientName, patientReportDTO.report, patientReportDTO.dateOfSubmission);
+        },
+      );
+    } else {
+      _showToast(context, 'Data Loading Failed!');
+    }
+  }
+
+
+  //set up bell icon list Static List
+  // Widget _bellIconList() => PopupMenuButton<int>(
+  //   itemBuilder: (context) =>
+  //   [
+  //     PopupMenuItem(
+  //       value: 1,
+  //       child: Text("First"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 2,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 3,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 4,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 5,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //     PopupMenuItem(
+  //       value: 6,
+  //       child: Text("Second"),
+  //     ),
+  //   ],
+  //
+  //   child: Stack(
+  //     children: [
+  //       Icon(Icons.notifications, size: 30, color: Colors.white,),
+  //       Container(
+  //           width: 35,
+  //           height: 35,
+  //           alignment: Alignment.topRight,
+  //           margin: EdgeInsets.only(top: 5),
+  //           child: Container(
+  //             width: 15,
+  //             height: 15,
+  //             decoration: BoxDecoration(
+  //                 shape: BoxShape.circle,
+  //                 color: Color(0xffc32c37),
+  //                 border: Border.all(color: Colors.white, width: 1)),
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(0.0),
+  //               child: Center(
+  //                 child: Text(
+  //                   _counter.toString(),
+  //                   style: TextStyle(fontSize: 10, color: Colors.white),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //     ],
+  //   ),
+  // );
 
 }
