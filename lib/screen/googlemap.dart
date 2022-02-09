@@ -300,7 +300,14 @@ class _MapViewState extends State<MapView> {
 
   Future<void> _selectToTime(BuildContext context) async {
     final TimeOfDay? pickedTime =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+        await showTimePicker(context: context, initialTime: TimeOfDay.now(), builder: (context, child) {
+      return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            // Using 12-Hour format
+              alwaysUse24HourFormat: false),
+          // If you want 24-Hour format, just change alwaysUse24HourFormat to true
+          child: child!);
+    });
 
     if (pickedTime != null)
       setState(() {

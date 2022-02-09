@@ -102,8 +102,8 @@ class _SubmitReadingsState extends State<SubmitReadings> {
   String _daysOfContact = '14';
   var _daysOfContactList = ['14','13','12','11','10','9','8','7','6','5','4','3','2','1','0'];
 
-  String _daysOfLastContact = '10';
-  var _daysOfLastContactList = ['14','13','12','11','10','9','8','7','6','5','4','3','2','1','0'];
+  String _daysOfLastContact = '1';
+  var _daysOfLastContactList = ['31','30','29','28','27','26','25','24','23','22','21','20','19','18','17','16','15','14','13','12','11','10','9','8','7','6','5','4','3','2','1','0'];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -138,8 +138,15 @@ class _SubmitReadingsState extends State<SubmitReadings> {
 
   Future<void> _selectToTime(BuildContext context) async {
     final TimeOfDay? pickedTime =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
-
+        await showTimePicker(context: context, initialTime: TimeOfDay.now(),
+            builder: (context, child) {
+              return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    // Using 12-Hour format
+                      alwaysUse24HourFormat: false),
+                  // If you want 24-Hour format, just change alwaysUse24HourFormat to true
+                  child: child!);
+            });
     if (pickedTime != null)
       setState(() {
         _durationTo = pickedTime.format(context);
@@ -555,6 +562,7 @@ class _SubmitReadingsState extends State<SubmitReadings> {
                                   sortAscending: true,
                                   sortColumnIndex: 0,
                                   headingRowHeight: 0,
+                                  columnSpacing: 20.0,
                                   columns: [
                                     DataColumn(
                                       label: Text("Date", textAlign: TextAlign.start),
