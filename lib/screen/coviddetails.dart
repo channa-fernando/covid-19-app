@@ -579,424 +579,202 @@ class _CovidDetailsState extends State<CovidDetails> {
   }
 
   // set up the AlertDialog
-  AlertDialog alert(String title, String content, String dateOfSubmission) => AlertDialog(
+  AlertDialog alert(String title, List<String> basicQuestions, List<String> answers, String dateOfSubmission) => AlertDialog(
     title: Text("Risk Assessment Report Response"),
-    content: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        Text('Patient Name: Mr: ' + title + "\n\n" + "Date of Submission: "+ dateOfSubmission +"\n\n" +"Answers for Risk Assessment: " +"\n"),
-        DefaultTabController(
-          length: 3,
-          child: SizedBox(
-            height: 380.0,
-            child: Column(
-              children: <Widget>[
-                TabBar(
-                  tabs: <Widget>[
-                    Tab(
-                      child: Text("Activity", style: TextStyle(color: Colors.black)),
-
-                    ),
-                    Tab(
-                      child: Text("Work Place", style: TextStyle(color: Colors.black)),
-                    ),
-                    Tab(
-                      child: Text("Gathering", style: TextStyle(color: Colors.black)),
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
+    content: Container(
+        height: 1000,
+        width: 450,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text('Patient Name: Mr: ' + title + "\n\n" + "Date of Submission: "+ dateOfSubmission +"\n\n" +"Answers for Risk Assessment: " +"\n"),
+              Row(children: [
+                Text("Are you Vaccinated? "),
+                Text(basicQuestions[0], style: const TextStyle(fontWeight: FontWeight.bold))]
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(children: [
+                Text("On long-term Treatment? "),
+                Text(basicQuestions[1], style: const TextStyle(fontWeight: FontWeight.bold))]
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(children: [
+                Text("Name of the Positive Case? "),
+                Text(basicQuestions[2], style: const TextStyle(fontWeight: FontWeight.bold))]
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(children: [
+                Text("Days of contact? "),
+                Text(basicQuestions[3], style: const TextStyle(fontWeight: FontWeight.bold))]
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(children: [
+                Text("Date of last contact? "),
+                Text(basicQuestions[4], style: const TextStyle(fontWeight: FontWeight.bold))]
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              DefaultTabController(
+                length: 3,
+                child: SizedBox(
+                  height: 400.0,
+                  child: Column(
                     children: <Widget>[
-                      Container(
-                        color: Colors.white,
-                        margin: const EdgeInsets.all(10.0),
-                        child: DataTable(
-                          sortAscending: true,
-                          sortColumnIndex: 0,
-                          headingRowHeight: 0,
-                          columnSpacing: 20.0,
-                          columns: [
-                            DataColumn(
-                              label: Text("Date", textAlign: TextAlign.start),
-                            ),
-                            DataColumn(
-                              label: Text("Date", textAlign: TextAlign.start),
-                            )
-                          ],
-                          rows: [
-                            DataRow(cells: [
-                              DataCell(Container(child: Text('Was your colleague wearing mask at all times during the Interaction?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option1,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option1= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Were you wearing a mask during all interactions?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option2,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option2= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Did you share a meal or eat in the same table at least once during infectious period*?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option3,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option3= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container(child: Text('Did you share bottle/glass/tea cup, personal items (pen, purse, keys, books, etc..) at least once during infectious period*')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option4,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option4= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Did you share same transport during infectious period*')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option5,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option5= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Did you share bed room during infectious period*')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option6,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option6= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                          ],
-                        ),
+                      TabBar(
+                        tabs: <Widget>[
+                          Tab(
+                            child: Text("Activity", style: TextStyle(color: Colors.black)),
+                          ),
+                          Tab(
+                            child: Text("Work Place", style: TextStyle(color: Colors.black)),
+                          ),
+                          Tab(
+                            child: Text("Gathering", style: TextStyle(color: Colors.black)),
+                          )
+                        ],
                       ),
-                      Container(
-                        color: Colors.white,
-                        margin: const EdgeInsets.all(10.0),
-                        child: DataTable(
-                          sortAscending: true,
-                          sortColumnIndex: 0,
-                          headingRowHeight: 0,
-                          columns: [
-                            DataColumn(
-                              label: Text("Date", textAlign: TextAlign.start),
+                      Expanded(
+                        child: TabBarView(
+                          children: <Widget>[
+                            Container(
+                              color: Colors.white,
+                              margin: const EdgeInsets.all(0.0),
+                              child: DataTable(
+                                sortAscending: true,
+                                sortColumnIndex: 0,
+                                headingRowHeight: 0,
+                                columnSpacing: 2.0,
+                                dataRowHeight: 50.0,
+                                columns: [
+                                  DataColumn(
+                                    label: Text("Question", textAlign: TextAlign.start),
+                                  ),
+                                  DataColumn(
+                                    label: Text("Answer", textAlign: TextAlign.start),
+                                  )
+                                ],
+                                rows: [
+                                  DataRow(cells: [
+                                    DataCell(Container(child: Text('Was your colleague wearing mask at all times during the Interaction?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[0], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Were you wearing a mask during all interactions?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[1], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Did you share a meal or eat in the same table at least once during infectious period*?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[2], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container(child: Text('Did you share bottle/glass/tea cup, personal items (pen, purse, keys, books, etc..) at least once during infectious period*', style: TextStyle(fontSize: 11.0),),),),
+                                    DataCell(Container(child: Text(answers[3], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Did you share same transport during infectious period*', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[4], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Did you share bed room during infectious period*', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[5], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                ],
+                              ),
                             ),
-                            DataColumn(
-                              label: Text("Date", textAlign: TextAlign.start),
-                            )
-                          ],
-                          rows: [
-                            DataRow(cells: [
-                              DataCell(Container(child: Text('Do you work in same room during infectious period*?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option7,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option7= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Shared work place air conditioned?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option8,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option8= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Work place poorly ventilated or crowded?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option9,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option9= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        color: Colors.white,
-                        margin: const EdgeInsets.all(10.0),
-                        child: DataTable(
-                          sortAscending: true,
-                          sortColumnIndex: 0,
-                          headingRowHeight: 0,
-                          columns: [
-                            DataColumn(
-                              label: Text("Date", textAlign: TextAlign.start),
+                            Container(
+                              color: Colors.white,
+                              margin: const EdgeInsets.all(0.0),
+                              child: DataTable(
+                                sortAscending: true,
+                                sortColumnIndex: 0,
+                                headingRowHeight: 0,
+                                columnSpacing: 2,
+                                dataRowHeight: 50,
+                                columns: [
+                                  DataColumn(
+                                    label: Text("Question", textAlign: TextAlign.start),
+                                  ),
+                                  DataColumn(
+                                    label: Text("Answer", textAlign: TextAlign.start),
+                                  )
+                                ],
+                                rows: [
+                                  DataRow(cells: [
+                                    DataCell(Container(child: Text('Do you work in same room during infectious period*?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[6], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Shared work place air conditioned?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[7], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Work place poorly ventilated or crowded?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[8], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                ],
+                              ),
                             ),
-                            DataColumn(
-                              label: Text("Date", textAlign: TextAlign.start),
-                            )
-                          ],
-                          rows: [
-                            DataRow(cells: [
-                              DataCell(Container(child: Text('Were you in a gathering (Ex - Meeting, Class, Discussion, Practical) with the index case during the infectious period*?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option10,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option10= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Was the room where the gathering was held filled to more than 50% of capacity?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option11,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option11= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Was the room where gathering was held air conditioned?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option12,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option12= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container(child: Text('Was the room where the gathering was held poorly ventilated')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option13,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option13= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Container( child: Text('Was the gathering held for more than 15 min?')),),
-                              DataCell(Container(child:DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: _option14,
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 10,
-                                  elevation: 16,
-                                  items: optionList.map((String categorySelected) {
-                                    return DropdownMenuItem(
-                                      value: categorySelected,
-                                      child: Text(
-                                        categorySelected,
-                                        style: TextStyle(fontSize:15), textAlign: TextAlign.center,),);
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _option14= newValue!;
-                                    });
-                                  },
-                                ),
-                              )),),
-                            ]),
+                            Container(
+                              color: Colors.white,
+                              margin: const EdgeInsets.all(0.0),
+                              child: DataTable(
+                                sortAscending: true,
+                                sortColumnIndex: 0,
+                                headingRowHeight: 0,
+                                columnSpacing: 2,
+                                dataRowHeight: 50,
+                                columns: [
+                                  DataColumn(
+                                    label: Text("Question", textAlign: TextAlign.start),
+                                  ),
+                                  DataColumn(
+                                    label: Text("Answer", textAlign: TextAlign.start),
+                                  )
+                                ],
+                                rows: [
+                                  DataRow(cells: [
+                                    DataCell(Container(child: Text('Were you in a gathering (Ex - Meeting, Class, Discussion, Practical) with the index case during the infectious period*?', style: TextStyle(fontSize: 10.0),)),),
+                                    DataCell(Container(child: Text(answers[9], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Was the room where the gathering was held filled to more than 50% of capacity?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[10], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Was the room where gathering was held air conditioned?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[11], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container(child: Text('Was the room where the gathering was held poorly ventilated', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[12], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container( child: Text('Was the gathering held for more than 15 min?', style: TextStyle(fontSize: 12.0),)),),
+                                    DataCell(Container(child: Text(answers[13], style: TextStyle(fontWeight: FontWeight.bold),),),),
+                                  ]),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ],
-
+        )
     ),
     actions: [
       TextButton(
@@ -1082,10 +860,12 @@ class _CovidDetailsState extends State<CovidDetails> {
       _showToast(context, 'Data Loading Success!');
       print(response.body);
       PatientReportDTO patientReportDTO = PatientReportDTO.fromJson(jsonDecode(response.body));
+      List<String> answersList =  patientReportDTO.report.split(",");
+      List<String> basicQAnswersList =  patientReportDTO.basicQuestions.split(",");
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return alert(patientReportDTO.patientName, patientReportDTO.report, patientReportDTO.dateOfSubmission);
+          return alert(patientReportDTO.patientName,basicQAnswersList, answersList, patientReportDTO.dateOfSubmission);
         },
       );
     } else {
