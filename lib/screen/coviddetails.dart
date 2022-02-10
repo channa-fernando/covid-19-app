@@ -82,6 +82,8 @@ class _CovidDetailsState extends State<CovidDetails> {
 
   var doSubmit = (){};
 
+  late String _commentText = "";
+
   @override
   void initState() {
     super.initState();
@@ -588,7 +590,17 @@ class _CovidDetailsState extends State<CovidDetails> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Text('Patient Name: Mr: ' + title + "\n\n" + "Date of Submission: "+ dateOfSubmission +"\n\n" +"Answers for Risk Assessment: " +"\n"),
+              Text('Patient Name: Mr: ' + title),
+              SizedBox(
+                height: 10,
+              ),
+              Row(children: [
+                  Text('Date of Submission: '),
+                  Text(dateOfSubmission, style: const TextStyle(fontWeight: FontWeight.bold))]
+              ),
+              SizedBox(
+                height: 10,
+              ),
               Row(children: [
                 Text("Are you Vaccinated? "),
                 Text(basicQuestions[0], style: const TextStyle(fontWeight: FontWeight.bold))]
@@ -778,12 +790,53 @@ class _CovidDetailsState extends State<CovidDetails> {
     ),
     actions: [
       TextButton(
-        onPressed: (){},
-        child: Text("OK"),),
+        onPressed: (){
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return commentDialog();
+            },
+          );
+        },
+        child: Text("Comment"),),
+      TextButton(
+        onPressed: (){
+          Navigator.of(context).pop();
+        },
+        child: Text("Cancel"),),
     ],
   );
 
-  // set up the Bell Icon List
+  // Comment Dialog Box
+
+  AlertDialog commentDialog() => AlertDialog(
+    title: Text("Comment on The Patient"),
+    content: TextField(
+      maxLines: 5,
+      autofocus: false,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        hintText: 'Enter the Comment Here!',
+      ),
+      onChanged: (value) => _commentText = value,
+    ),
+    actions: [
+      TextButton(
+        onPressed: (){
+          print("Comment Text: " + _commentText);
+          _submitComment(_commentText);
+          Navigator.pushReplacementNamed(context, '/secure/dashboard');
+        },
+        child: Text("Submit"),),
+      TextButton(
+        onPressed: (){
+          Navigator.of(context).pop();
+        },
+        child: Text("Cancel"),),
+    ],
+  );
+
+    // set up the Bell Icon List
   Widget _bellIconList() => Theme(
       data: Theme.of(context).copyWith(
         cardColor: Colors.white.withOpacity(0.8),
@@ -849,6 +902,21 @@ class _CovidDetailsState extends State<CovidDetails> {
     }
     return formattedAnswers;
   }
+  void _submitComment(String comment) async {
+    var response = await http.post(Uri.parse(Constants.BASEURL + "/monitoring/doctorComment/"+ _patientId.toString()),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+      body: jsonEncode(comment),
+    );
+    if (response.statusCode == 200) {
+      _showToast(context, 'Comment Submission Success!');
+    } else{
+      _showToast(context, 'Data Loading Failed!');
+
+    }
+  }
+
   void _getPatientReport(int patientId) async {
     var response = await http.get(Uri.parse(Constants.BASEURL + "/monitoring/patientRecords/"+ _patientId.toString()),
         headers: <String, String>{
